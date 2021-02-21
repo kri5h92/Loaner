@@ -1,0 +1,42 @@
+version: "2"
+
+services:
+  client:
+    build: ./client
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./client:/client
+    links:
+      - api
+    networks:
+      - webappnetwork
+
+  api:
+    build: ./api
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api:/api
+    depends_on:
+      - mongodb
+    networks:
+      - webappnetwork
+
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    volumes:
+      - ./data-node/__DBSTORE__:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --noauth
+    networks:
+      - webappnetwork
+
+networks:
+  webappnetwork:
+    driver: bridge
