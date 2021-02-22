@@ -14,6 +14,7 @@ module.exports = merge(common, {
   devServer: {
     contentBase: paths.build,
     host: "0.0.0.0",
+    port: 8080,
     // writeToDisk: true,
   },
   // improve runtime build performance
