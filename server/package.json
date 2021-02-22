@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm-run-all dbon && nodemon --exec babel-node ./index.js",
+    "start": "nodemon --exec babel-node ./index.js",
     "dboff": "killall mongod",
     "dbon": "pgrep mongod || (mkdir -p ./.DB_Store ./logs && mongod --dbpath ./.DB_Store --fork --logpath ./logs/db.startup.log)"
   },

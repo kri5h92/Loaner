@@ -9,17 +9,17 @@ services:
     volumes:
       - ./client:/client
     links:
-      - api
+      - server
     networks:
       - webappnetwork
 
-  api:
-    build: ./api
+  server:
+    build: ./server
     restart: always
     ports:
       - "3000:3000"
     volumes:
-      - ./api:/api
+      - ./server:/server
     depends_on:
       - mongodb
     networks:
@@ -30,7 +30,7 @@ services:
     restart: always
     container_name: mongodb
     volumes:
-      - ./data-node/__DBSTORE__:/data/db
+      - ./data-node/DB_Store:/data/db
     ports:
       - 27017:27017
     command: mongod --noauth
