@@ -5,7 +5,8 @@
   "scripts": {
     "start": "nodemon --exec babel-node ./index.js",
     "dboff": "killall mongod",
-    "dbon": "pgrep mongod || (mkdir -p ./.DB_Store ./logs && mongod --dbpath ./.DB_Store --fork --logpath ./logs/db.startup.log)"
+    "dbon": "pgrep mongod || (mkdir -p ./.DB_Store ./logs && mongod --dbpath ./.DB_Store --fork --logpath ./logs/db.startup.log)",
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -17,7 +18,8 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "mongoose": "^5.11.17",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "validator": "^13.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",
@@ -27,7 +29,15 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "8.0.0",
     "eslint-plugin-import": "^2.22.1",
+    "jest": "^26.6.3",
+    "mongodb-memory-server": "^6.9.3",
     "nodemon": "^2.0.7",
     "prettier": "2.2.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

@@ -4,21 +4,23 @@ const mongoose = require("mongoose");
 
 // Variable to be sent to Frontend with Database status
 let databaseConnectionMsg = {
-  connecting: '"Waiting for Database response...',
+  connecting: 'Waiting for Database response...',
   connected: 'Database server connected successfully...',
   disconnected: 'Database server is down...',
   disconnecting: 'Database server is shutting down...',
 };
 
 router.get("/", function (req, res, next) {
+  const dbState = mongoose.connection.readyState;
 
-  if(mongoose.STATES.connected){
+  if( dbState === mongoose.STATES.connected){
     res.send(databaseConnectionMsg.connected);
-  }else if(mongoose.STATES.connecting){
+  }else if( dbState === mongoose.STATES.connecting){
     res.send(databaseConnectionMsg.connecting);
-  }else if(mongoose.STATES.disconnecting){
-    res.send(databaseConnectionMsg.disconnecting);
-  }else if(monogoose.STATES.uninitialized || mongoose.STATES.disconnected){
+  }else if( dbState === mongoose.STATES.disconnecting){
+    res.send( dbState === databaseConnectionMsg.disconnecting);
+  }else if( dbState === monogoose.STATES.uninitialized ||
+            dbState === mongoose.STATES.disconnected){
     res.send(databaseConnectionMsg.disconnected);
   }
 

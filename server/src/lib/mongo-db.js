@@ -1,23 +1,28 @@
 const mongoose = require('mongoose');
 
 /**
- * Set varaiable
+ * Set mongoose default options
  */
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useUnifiedTopology', true);
+const defMongooseOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+}
 
-export const connect = (uri) => {
+export const connect = (uri, mongooseOptions = {}) => {
   return new Promise(function(resolve,reject){
-    mongoose.connect(uri);
-    // If there is a connection error send an error message
-    mongoose.connection.on("error", (error) => {
+    mongooseOptions = Object.assign({}, defMongooseOptions, mongooseOptions);
+    mongoose.connect(uri,mongooseOptions);
+
+    //db reference
+    const db = mongoose.connection;
+
+    db.then((response) => {
+      resolve(response);
+    }).catch((error)=>{
       reject(error);
     });
-    // If connected to MongoDB send a success message
-    mongoose.connection.once("open", (res) => {
-      console.log(res);
-      resolve("Connected to Database");
-    });
+
   })
 }
 
