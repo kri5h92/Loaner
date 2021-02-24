@@ -6,6 +6,7 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const mongoDB = require('./lib/mongo-db');
+const {insertUser} = require('./db/users');
 
 /**
  * Load environment variables from .env file
@@ -15,18 +16,15 @@ dotenv.config({path: path.resolve(__dirname,'../.env')});
 /**
  * Extract environment variables
  */
+const isDevelopment = process.env.NODE_ENV === 'development';
 const PORT = process.env.PORT || 3000;
 const HOSTNAME = process.env.HOST || '0.0.0.0';
 const MONGODB_URI = process.env.MONGODB_URI;
 
-
 /**
  * Routers
  */
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const testAPIRouter = require('./routes/testAPI');
-const testDBRouter = require('./routes/testDB');
+const routes = require('./routes/routes');
 
 /**
  * Create Express Server
@@ -43,16 +41,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(cors());
-app.use(logger('dev'));
+if(isDevelopment){
+  app.use(logger('dev'));
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/testAPI',testAPIRouter);
-app.use('/testDB',testDBRouter);
+app.use('/',routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -70,17 +67,17 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-export const start = () => {
+export const start = async() => {
   /**
    * Connect to DB
    */
-  mongoDB.connect(MONGODB_URI)
-  .then(succ=>{
+  try{
+    await mongoDB.connect(MONGODB_URI)
     console.log("MongoDB connected successfully");
-  })
-  .catch(err=>{
+  }catch(err){
+    console.error(err);
     console.log('MongoDB connection error. Please make sure MongoDB is running.');
-  });
+  };
 
   /**
    * Start express server listener

@@ -22,8 +22,6 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    maxLength: 14,
-    minLength: 8,
     required: true
   }
 },{timestamps: true});
@@ -37,6 +35,13 @@ userSchema
 userSchema
   .virtual('url')
   .get(()=>'catalog/user/'+this._id);
+
+
+// Path for validation of unique email
+userSchema.path('email').validate(async(value) => {
+  const emailCount = await mongoose.model('User').count({email: value });
+  return !emailCount; // if count greater than zero invalidate
+}, 'Email already exists');
 
 const User = new mongoose.model('User',userSchema);
 

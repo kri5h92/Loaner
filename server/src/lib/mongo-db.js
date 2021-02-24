@@ -30,3 +30,12 @@ export const disconnect = () => {
   mongoose.disconnect();
 }
 
+export const getDatabase = async () => {
+  const db = mongoose.connection;
+  if(!db){
+    await connect();
+    db = mongoose.connection;
+  }
+  return db;
+}
+

@@ -1,4 +1,5 @@
-const express = require('express');
-const router = express.Router();router.get('/', function(req, res, next) {
-    res.send('API is working properly');
-});module.exports = router
+module.exports = (router) =>{
+    router.get('/testAPI', function(req, res, next) {
+        res.send('API is working properly');
+    });
+}

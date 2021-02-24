@@ -38,3 +38,13 @@ export const clear = async () => {
       await collection.deleteMany();
   }
 }
+
+
+export const getDatabase = async () => {
+    let db = mongoose.connection.db;
+    if(!db){
+      await connect();
+      db = mongoose.connection.db;
+    }
+    return db;
+}
