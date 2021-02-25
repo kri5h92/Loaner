@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 const defMongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  useFindAndModify: false,
 }
 
 export const connect = (uri, mongooseOptions = {}) => {

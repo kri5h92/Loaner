@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  role:{
+    type: String,
+    default: 'customer',
+    enum: ['customer','agent','admin']
+  },
+  accessToken:{
+    type:String
   }
 },{timestamps: true});
 
