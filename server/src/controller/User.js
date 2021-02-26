@@ -4,8 +4,12 @@ const jwt = require("jsonwebtoken");
 
 const _getHashedPassword = async (password) => {
   try {
-    const saltRound = 10;
-    return await bcrypt.hash(password, saltRound);
+    if(password){
+      const saltRound = 10;
+      return await bcrypt.hash(password, saltRound);
+    }else{
+      throw new Error('password is undefined');
+    }
   } catch (err) {
     console.error("Error hashing the password", err);
   }
@@ -59,12 +63,19 @@ exports.getUsers = async (req, res) => {
   try {
     const payload = req.decoded;
 
-    if (payload && payload.userRole === "admin") {
-      const users = [...(await User.find({}))];
+    if (payload) {
+      if(payload.userRole === "admin"){
+        const users = [...(await User.find({}))];
 
-      result.data = users;
-      result.status = status;
-      res.status(status).json(result);
+        result.data = users;
+        result.status = status;
+        res.status(status).json(result);
+      }else{
+        status = 403;
+        result.status = status;
+        result.error = "Only admin can access this resource";
+        res.status(status).json(result);
+      }
     } else {
       status = 401;
       result.status = status;
@@ -102,26 +113,32 @@ exports.getLogin = async (req, res) => {
         // Update newly generated token in db
         await User.findByIdAndUpdate(user._id, { accessToken });
 
-        result.data = user;
-        result.status = status;
+        const {_id,type,full_name,role,access_token} = user;
+        result.data = [{_id,type,full_name,role,access_token}];
       } else {
         status = 401;
-        result.status = status;
-        result.error = "Authentication error";
+        result.errors = [{
+          title: "Authentication error",
+          message: "User password is invalid"}
+        ];
       }
       res.status(status).json(result);
     } else {
-      status = 404;
-      result.status = status;
-      result.error = "User not found";
+      status = 401;
+      result.errors = [{
+        title: "Authentication error",
+        message: "Provided email id is not registered"}
+      ];
       res.status(status).json(result);
     }
   } catch (err) {
     console.error(err);
 
     status = 500;
-    result.status = status;
-    result.error = err;
+    result.errors = [{
+      title: "Server error",
+      message: "You may try again or wait till the error get resolve."}
+    ];
     res.status(status).json(result);
   }
 };
@@ -135,11 +152,11 @@ exports.postSignup = async (req, res) => {
   let status = 201;
 
   try {
-    let { firstName, lastName, password, email, role } = req.body;
+    let { first_name, last_name, password, email, role } = req.body;
     password = await _getHashedPassword(password);
     role = role || "customer";
 
-    const newUser = new User({ firstName, lastName, email, password, role });
+    const newUser = new User({ first_name, last_name, email, password, role });
 
     //Create a token
     const accessToken = await _createToken(newUser.role);
@@ -148,15 +165,23 @@ exports.postSignup = async (req, res) => {
     //save user
     await newUser.save();
 
-    result.status = status;
-    result.data = newUser;
+    const {_id,type} = newUser;
+    result.data = [{_id,type}];
     res.status(status).json(result);
+
   } catch (err) {
     console.error(err);
 
-    status = 500;
-    result.status = status;
-    result.error = err;
+    if(err.name === 'ValidationError'){
+      status = 422;
+      result.errors = [{...err.errors}];
+    }else{
+      status = 500;
+      result.errors = [{
+        title: "Server error",
+        message: "You may try again or wait till the error get resolve."
+      }];
+    }
     res.status(status).json(result);
   }
 };

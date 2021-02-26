@@ -2,16 +2,16 @@ const controller = require('../controller/User');
 const {validateToken} = require('../utils/jwt');
 
 module.exports = (router) => {
-  router.route('/users')
+  router.route('/v1/users')
     .get(validateToken,controller.getUsers);
 
-  router.route('/user/:id')
+  router.route('/v1/users/:id')
     .get(controller.getUser);
 
-  router.route('/signup')
+  router.route('/v1/signup')
     .post(controller.postSignup);
 
-  router.route('/login')
+  router.route('/v1/login')
     .get(controller.getLogin);
 };
 

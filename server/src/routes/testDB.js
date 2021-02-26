@@ -1,5 +1,3 @@
-const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
 
 // Variable to be sent to Frontend with Database status
@@ -11,7 +9,7 @@ let databaseConnectionMsg = {
 };
 
 module.exports = (router) => {
-  router.get("/testDB", function (req, res, next) {
+  router.get("/v1/testDB", function (req, res, next) {
     const dbState = mongoose.connection.readyState;
 
     if( dbState === mongoose.STATES.connected){
