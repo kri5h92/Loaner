@@ -1,41 +1,65 @@
 import React, { Component } from "react";
+import { Provider } from "react-redux";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import PrivateRoute from "../private-route/PrivateRoute";
+import store from "../store.js";
+import setAuthToken from "../utils/setAuthToken";
+import Dashboard from "./Dashboard";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
+
+if(localStorage.jwtToken){
+  const token = localStorage.jwtToken;
+  setAuthToken(token);
+}
 
 class App extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       apiResponse: "",
-      dbResponse: ""
+      dbResponse: "",
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.callAPI();
     this.callDB();
   }
 
-  callAPI(){
+  callAPI() {
     const self = this;
-    fetch('http://localhost:3000/testAPI')
-      .then(res=>res.text())
-      .then(res=> this.setState({apiResponse:res}));
+    fetch("/v1/testAPI")
+      .then((res) => res.text())
+      .then((res) => this.setState({ apiResponse: res }));
   }
 
-  callDB(){
+  callDB() {
     const self = this;
-    fetch('http://localhost:3000/testDB')
-      .then(res=>res.text())
-      .then(res=> this.setState({dbResponse:res}));
+    fetch("/v1/testDB")
+      .then((res) => res.text())
+      .then((res) => this.setState({ dbResponse: res }));
   }
-
 
   render() {
     return (
-      <div>
-        <h1>My MERN App!!</h1>
-        <p>{this.state.apiResponse}</p>
-        <p>{this.state.dbResponse}</p>
-      </div>
+      <Provider store={store}>
+         <div className="bg-gray-100 min-h-screen">
+          <Router>
+            <Switch>
+              <Route exact path="/">
+                <SignIn/>
+              </Route>
+              <Route exact path="/signup">
+                <SignUp/>
+              </Route>
+              <PrivateRoute exact path="/dashboard">
+                <Dashboard />
+              </PrivateRoute>
+            </Switch>
+          </Router>
+        </div>
+      </Provider>
     );
   }
 }
