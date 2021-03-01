@@ -4,18 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client-install":"cd ./client && npm install",
+    "client-install": "cd ./client && npm install",
     "install": "npm install",
-    "install-all":"npm-run-all -p install client-install server-install",
-    "server-install":"cd ./server && npm install",
-    "serve:client":"cd ./client && npm run start",
+    "install-all": "npm-run-all -p install client-install server-install",
+    "server-install": "cd ./server && npm install",
+    "serve:client": "cd ./client && npm run start",
     "start": "npm-run-all -p start:server serve:client",
-    "start:server":"cd ./server && npm run start"
+    "start:server": "cd ./server && npm run dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "npm-run-all": "^4.1.5"
-  }
+  },
+  "dependencies": {}
 }

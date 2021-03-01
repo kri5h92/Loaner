@@ -1,6 +1,8 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const {validateLoginInputs} = require("../validation/login");
+const {validateSignUpInputs} = require("../validation/signUp");
 
 const _getHashedPassword = async (password) => {
   try {
@@ -93,13 +95,22 @@ exports.getUsers = async (req, res) => {
 };
 
 /**
- *  GET /login
+ *  POST /login
  *  login using email and password
  */
-exports.getLogin = async (req, res) => {
+exports.postLogin = async (req, res) => {
   let result = {};
-  let status = 200;
+  let status = 201;
+
   try {
+    // Validation check
+    const {isValid,errors} = validateLoginInputs(req.body);
+    if(!isValid){
+      status = 422;
+      result.errors = errors;
+      return res.status(status).json(result);
+    }
+
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (user) {
@@ -111,10 +122,10 @@ exports.getLogin = async (req, res) => {
         const accessToken = await _createToken(user.role);
 
         // Update newly generated token in db
-        await User.findByIdAndUpdate(user._id, { accessToken });
+        await User.findByIdAndUpdate(user._id, { access_token: accessToken });
 
         const {_id,type,full_name,role,access_token} = user;
-        result.data = [{_id,type,full_name,role,access_token}];
+        result.data = [{_id, type, full_name, role, access_token}];
       } else {
         status = 401;
         result.errors = [{
@@ -152,6 +163,15 @@ exports.postSignup = async (req, res) => {
   let status = 201;
 
   try {
+
+    // Validation check
+    const {isValid,errors} = validateSignUpInputs(req.body);
+    if(!isValid){
+      status = 422;
+      result.errors = errors;
+      return res.status(status).json(result);
+    }
+
     let { first_name, last_name, password, email, role } = req.body;
     password = await _getHashedPassword(password);
     role = role || "customer";

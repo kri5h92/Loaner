@@ -12,6 +12,6 @@ module.exports = (router) => {
     .post(controller.postSignup);
 
   router.route('/v1/login')
-    .get(controller.getLogin);
+    .post(controller.postLogin);
 };
 
