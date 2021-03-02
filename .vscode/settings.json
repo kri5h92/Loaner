@@ -1,0 +1,10 @@
+{
+  "launch": {
+    "configurations": [],
+    "compounds": []
+  },
+  "eslint.workingDirectories": [
+      "./client",
+      "./server"
+  ]
+}

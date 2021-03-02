@@ -2,15 +2,24 @@ import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
 import {
   GET_ERRORS,
-  SET_CURRENT_USER
+  SET_CURRENT_USER,
+  USER_LOADING
 } from "./types";
 
+export const setCurrentUser = decoded => ({
+  type: SET_CURRENT_USER,
+  payload: decoded
+})
+
+export const setUserLoading = () => ({
+  type: USER_LOADING
+})
 
 // SignUp user
 export const signUpUser = (userData, history) => dispatch => {
   axios
   .post("/v1/signup",userData)
-    .then(res => history.push("/signin"))
+    .then(res => history.push("/"))
     .catch(err=>{
       dispatch({
         type: GET_ERRORS,
@@ -24,6 +33,7 @@ export const loginUser = (userData) => dispatch => {
   axios
     .post("/v1/login",userData)
     .then(res => {
+      // eslint-disable-next-line camelcase
       const {access_token} = res.data;
       localStorage.setItem("jwtToken",access_token);
       setAuthToken(access_token);
@@ -33,25 +43,11 @@ export const loginUser = (userData) => dispatch => {
       dispatch(setCurrentUser(res.data));
     })
     .catch(err=>{
-      console.error(err);
       dispatch({
         type: GET_ERRORS,
         payload: err
       });
     });
-}
-
-export const setCurrentUser = decoded => {
-  return{
-    type: SET_CURRENT_USER,
-    payload: decoded
-  }
-}
-
-export const setUserLoading = () => {
-  return {
-    type: USER_LOADING
-  }
 }
 
 export const logoutUser = () => dispatch => {

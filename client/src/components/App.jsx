@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import PrivateRoute from "../private-route/PrivateRoute";
-import store from "../store.js";
+import store from "../store";
 import setAuthToken from "../utils/setAuthToken";
 import Dashboard from "./Dashboard";
 import SignIn from "./SignIn";
@@ -28,14 +28,12 @@ class App extends Component {
   }
 
   callAPI() {
-    const self = this;
     fetch("/v1/testAPI")
       .then((res) => res.text())
       .then((res) => this.setState({ apiResponse: res }));
   }
 
   callDB() {
-    const self = this;
     fetch("/v1/testDB")
       .then((res) => res.text())
       .then((res) => this.setState({ dbResponse: res }));

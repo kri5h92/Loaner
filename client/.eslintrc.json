@@ -4,7 +4,7 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["airbnb","prettier","prettier/react"],
+  "extends": ["airbnb", "prettier", "prettier/react"],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaFeatures": {
@@ -15,11 +15,16 @@
   },
   "plugins": ["react"],
   "rules": {
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
-    /* "semi": ["warn", "always"],
-    "quotes": ["warn", "single"],
-    "react/jsx-uses-react": "warn",
-    "react/jsx-uses-vars": "warn" */
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "jsx-a11y/label-has-associated-control": [ "error", {
+      "required": {
+        "some": [ "nesting", "id"  ]
+      }
+    }],
+    "jsx-a11y/label-has-for": [ "error", {
+      "required": {
+        "some": [ "nesting", "id"  ]
+      }
+    }]
   }
-
 }
