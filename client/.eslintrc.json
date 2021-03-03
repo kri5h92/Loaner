@@ -26,5 +26,10 @@
         "some": [ "nesting", "id"  ]
       }
     }]
-  }
+  },
+  "settings": {
+		"react": {
+			"version": 'detect'   // Automatically detect the react version
+		}
+   },
 }

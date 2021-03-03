@@ -3,12 +3,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { signUpUser } from '../actions/authActions';
+import LoadingModal from './shared/Modal/LoadingModal';
 
 class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      errors: {}
+      errors: {},
+      showModal: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -19,6 +21,23 @@ class SignUp extends Component {
       return { errors: nextProps.errors };
     }
     return null;
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    const {errors} = this.state;
+    const {auth} = this.props;
+    
+    if (prevProps.auth !== auth){
+      auth.loading 
+      ? this.setState({showModal: true})
+      : this.setState({showModal: false})
+    }
+    
+    if(prevState.errors !== errors){		
+		this.setState(()=>{
+			errors
+		});
+	}
   }
 
   handleSubmit(e) {
@@ -41,8 +60,11 @@ class SignUp extends Component {
   }
 
   render() {
+    const {showModal} = this.state;
+    
     return (
       <section className='sign-up'>
+        {showModal && <LoadingModal />}
         <div className='p-8 min-h-screen'>
           <div className='max-w-md mx-auto md:max-w-1/2'>
             <header className='space-y-4 text-center'>

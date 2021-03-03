@@ -11,16 +11,24 @@ export const setCurrentUser = decoded => ({
   payload: decoded
 })
 
-export const setUserLoading = () => ({
-  type: USER_LOADING
+export const setUserLoading = (flag = true) => ({
+  type: USER_LOADING,
+  flag
 })
 
 // SignUp user
 export const signUpUser = (userData, history) => dispatch => {
+  
+  dispatch(setUserLoading(true));
+  
   axios
   .post("/v1/signup",userData)
-    .then(res => history.push("/"))
+    .then(res => {
+		dispatch(setUserLoading(false));
+		history.push("/")
+	})
     .catch(err=>{
+	  dispatch(setUserLoading(false));
       dispatch({
         type: GET_ERRORS,
         payload: err
@@ -30,6 +38,9 @@ export const signUpUser = (userData, history) => dispatch => {
 
 // login User
 export const loginUser = (userData) => dispatch => {
+  
+  dispatch(setUserLoading(true));
+  
   axios
     .post("/v1/login",userData)
     .then(res => {
@@ -40,9 +51,11 @@ export const loginUser = (userData) => dispatch => {
       // Decode token to get user data
       // const decoded = jwt_decode(token);
       // Set current user
+      dispatch(setUserLoading(false));
       dispatch(setCurrentUser(res.data));
     })
     .catch(err=>{
+	  dispatch(setUserLoading(false));
       dispatch({
         type: GET_ERRORS,
         payload: err
