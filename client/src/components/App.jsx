@@ -5,6 +5,7 @@ import PrivateRoute from '../private-route/PrivateRoute';
 import store from '../store';
 import setAuthToken from '../utils/setAuthToken';
 import Dashboard from './Dashboard';
+import ErrorBoundary from './ErrorBoundary';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 
@@ -43,19 +44,21 @@ class App extends PureComponent {
     return (
       <Provider store={store}>
         <div className='bg-gray-100 min-h-screen'>
-          <Router>
-            <Switch>
-              <Route exact path='/'>
-                <SignIn />
-              </Route>
-              <Route exact path='/signup'>
-                <SignUp />
-              </Route>
-              <PrivateRoute exact path='/dashboard'>
-                <Dashboard />
-              </PrivateRoute>
-            </Switch>
-          </Router>
+          <ErrorBoundary>
+            <Router>
+              <Switch>
+                <Route exact path='/'>
+                  <SignIn />
+                </Route>
+                <Route exact path='/signup'>
+                  <SignUp />
+                </Route>
+                <PrivateRoute exact path='/dashboard'>
+                  <Dashboard />
+                </PrivateRoute>
+              </Switch>
+            </Router>
+          </ErrorBoundary>
         </div>
       </Provider>
     );

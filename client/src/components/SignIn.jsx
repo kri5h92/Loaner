@@ -10,9 +10,9 @@ class SignIn extends Component {
     super(props);
     this.state = {
       email: '',
-      password: '',   
+      password: '',
       errors: {},
-      showModal: false,
+      showModal: false
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -20,28 +20,25 @@ class SignIn extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-  
     if (nextProps.errors !== prevState.errors) {
       return { errors: nextProps.errors };
     }
-    
+
     return null;
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { auth, history } = this.props;
     const { errors } = this.state;
-    
-    if (prevProps.auth !== auth){
-    
-      auth.loading 
-      ? this.setState({showModal: true})
-      : this.setState({showModal: false})
-      
+
+    if (prevProps.auth !== auth) {
+      auth.loading
+        ? this.setState({ showModal: true })
+        : this.setState({ showModal: false });
+
       if (auth.isAuthenticated) {
         history.push('/dashboard');
       }
-	  
     }
 
     if (prevState.errors !== errors) {
@@ -60,7 +57,7 @@ class SignIn extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const { loginUser, } = this.props;
+    const { loginUser } = this.props;
     const { email, password } = this.state;
 
     const payloads = {
@@ -73,10 +70,10 @@ class SignIn extends Component {
 
   render() {
     const { password, email, showModal } = this.state;
-    
+
     return (
       <section className='sign-in'>
-		{showModal && <LoadingModal />}
+        {showModal && <LoadingModal />}
         <div className='p-8 min-h-screen'>
           <div className='max-w-md mx-auto md:max-w-1/2'>
             <header className='space-y-4 text-center'>
@@ -146,7 +143,7 @@ class SignIn extends Component {
 
 SignIn.propTypes = {
   auth: PropTypes.shape({}).isRequired,
-  loginUser: PropTypes.func.isRequired,
+  loginUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
