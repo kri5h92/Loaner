@@ -30,9 +30,11 @@ class SignUp extends Component {
     const {auth} = this.props;
     
     if (prevProps.auth !== auth){
-      auth.loading 
-      ? this.setState({showModal: true})
-      : this.setState({showModal: false})
+      if(auth.loading){
+        this.setState({showModal: true})
+      }else{
+        this.setState({ showModal: false });
+      } 
     }
     
     if(prevState.errors !== errors){		
@@ -84,11 +86,10 @@ class SignUp extends Component {
       <div className="h-screen flex flex-col justify-center items-center">
         <h1 className="text-4xl">How would you like to join us ?</h1>
         <div className="p-8 flex justify-around items-center gap-4 text-white">
-          <button className="customer py-3 px-4 bg-black hover:bg-gray-800" onClick={this.handleRoleBtnClick}>As Customer</button>
-          <button className="agent py-3 px-4 bg-black hover:bg-gray-800" onClick={this.handleRoleBtnClick}>As Agent</button>
+          <button className="customer py-3 px-4 bg-black hover:bg-gray-800" onClick={this.handleRoleBtnClick} type="button">As Customer</button>
+          <button className="agent py-3 px-4 bg-black hover:bg-gray-800" onClick={this.handleRoleBtnClick} type="button">As Agent</button>
         </div>
-      </div>
-       
+      </div>  
     )
 
     const signUpFormTemplate = (

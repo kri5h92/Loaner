@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client-install": "cd ./client && npm install",
-    "install": "npm install",
-    "install-all": "npm-run-all -p install client-install server-install",
-    "server-install": "cd ./server && npm install",
+    "client-install": "npm install --prefix ./client",
+    "install-all": "npm install && npm run client-install && npm run server-install",
+    "server-install": "npm install --prefix ./server",
     "serve:client": "cd ./client && npm run start",
     "start": "npm-run-all -p start:server serve:client",
     "start:server": "cd ./server && npm run dev"

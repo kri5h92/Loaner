@@ -3,16 +3,10 @@ import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import PrivateRoute from '../private-route/PrivateRoute';
 import store from '../store';
-import setAuthToken from '../utils/setAuthToken';
-import Dashboard from './Dashboard';
 import ErrorBoundary from './ErrorBoundary';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-
-if (localStorage.jwtToken) {
-  const token = localStorage.jwtToken;
-  setAuthToken(token);
-}
+import Dashboard from './Dashboard';
 
 class App extends PureComponent {
   constructor(props) {

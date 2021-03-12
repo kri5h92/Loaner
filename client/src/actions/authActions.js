@@ -44,15 +44,16 @@ export const loginUser = (userData) => dispatch => {
   axios
     .post("/v1/login",userData)
     .then(res => {
+      const data = res.data.data[0];
       // eslint-disable-next-line camelcase
-      const {access_token} = res.data;
+      const {access_token} = data;
       localStorage.setItem("jwtToken",access_token);
       setAuthToken(access_token);
       // Decode token to get user data
       // const decoded = jwt_decode(token);
       // Set current user
       dispatch(setUserLoading(false));
-      dispatch(setCurrentUser(res.data));
+      dispatch(setCurrentUser(data));
     })
     .catch(err=>{
 	  dispatch(setUserLoading(false));

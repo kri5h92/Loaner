@@ -66,7 +66,7 @@ exports.getUsers = async (req, res) => {
     const payload = req.decoded;
 
     if (payload) {
-      if(payload.userRole === "admin"){
+      if(payload.userRole !== "admin"){
         const users = [...(await User.find({}))];
 
         result.data = users;

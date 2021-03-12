@@ -3,15 +3,14 @@ GET http://localhost:3000/v1/
 
 ###
 GET http://localhost:3000/v1/users
-Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1MTAyNDQ4LCJleHAiOjE2MTUyNzUyNDh9.yKX6LvRxQCPFP-a_38sdrTFDML6-xk7XDnkHmbk7Q6M
-
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1NTQwODMwLCJleHAiOjE2MTU3MTM2MzB9.0B0o8uIdnkWzjv91Rv_R8TK3qPbMI7jAgo6MzxVhJYE
 ###
 POST http://localhost:3000/v1/login
 content-type: application/json 
 
 {
-    "email": "abc@abc.com",
-    "password": "abc@134"
+    "email": "agent@test.com",
+    "password": "test1234"
 }
 
 ###
