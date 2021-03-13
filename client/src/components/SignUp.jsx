@@ -46,7 +46,7 @@ class SignUp extends Component {
 
   handleRoleBtnClick(e){
     const {className} =  e.target;
-    
+    console.log(className);
     if(className.includes('customer')){
       this.setState({
         userRole: 'customer'
@@ -62,14 +62,14 @@ class SignUp extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { signUpUser, history } = this.props;
-
+    const {userRole} = this.state;
     const payloads = {
       first_name: this.first_name.value,
       last_name: this.last_name.value,
       email: this.email.value,
       password: this.password.value,
       password2: this.password2.value,
-      role: this.userRole
+      role: userRole
     };
 
     signUpUser(payloads, history);

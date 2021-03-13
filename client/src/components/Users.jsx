@@ -1,3 +1,5 @@
+// eslint-disable class-methods-use-this
+
 import React, { Component } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -13,18 +15,31 @@ class Users extends Component {
     };
 
     this.getUsers = this.getUsers.bind(this);
+    this.deleteUser = this.deleteUser.bind(this);
+    this.handleUserDeletion = this.handleUserDeletion.bind(this);
   }
 
   componentDidMount() {
     (async () => {
       const users = await this.getUsers();
       if (!isEmpty(users)) {
-        this.setState({ users: [...users] });
+        const {auth} = this.props;
+        let notLogedInUsers = users.filter(user => user._id !== auth.user._id);
+        this.setState({ users: [...notLogedInUsers] });
       }
     })();
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  async handleUserDeletion(id) {
+    const isDeleted = await this.deleteUser(id);
+    if (isDeleted) {
+      const users = this.state.users.filter((user) => user._id !== id);
+      this.setState({ users });
+    } else {
+      console.error('Unable to delete the user :(');
+    }
+  }
+
   async getUsers() {
     const { auth } = this.props;
     const accessToken = auth.user.access_token;
@@ -40,6 +55,23 @@ class Users extends Component {
       console.error(err);
     }
     return users;
+  }
+
+  async deleteUser(id) {
+    const { auth } = this.props;
+    const accessToken = auth.user.access_token;
+
+    try {
+      await axios.delete(`/v1/users/${id}`, {
+        headers: {
+          Authorization: `token ${accessToken}`
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+    return true;
   }
 
   render() {
@@ -61,6 +93,7 @@ class Users extends Component {
               <tr
                 key={uniqid()}
                 className='border-b border-gray-200 bg-gray-50 hover:bg-gray-100'
+                data-id={user._id}
               >
                 <td className='py-3 px-6'>{user._id}</td>
                 <td className='py-3 px-6'>{`${user.first_name} ${user.last_name}`}</td>
@@ -113,6 +146,7 @@ class Users extends Component {
                     <button
                       type='button'
                       className='w-4 transform hover:text-red-800 hover:scale-110'
+                      onClick={this.handleUserDeletion.bind(null, user._id)}
                     >
                       <svg
                         xmlns='http://www.w3.org/2000/svg'

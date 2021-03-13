@@ -14,3 +14,5 @@ content-type: application/json
 }
 
 ###
+DELETE http://localhost:3000/v1/users/6043970ba2d2954b6c94f9fe
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1NTQwODMwLCJleHAiOjE2MTU3MTM2MzB9.0B0o8uIdnkWzjv91Rv_R8TK3qPbMI7jAgo6MzxVhJYE

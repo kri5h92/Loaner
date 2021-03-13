@@ -1,5 +1,7 @@
 import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
+import {appSessionStorage} from "../utils/storage/sessionStorage";
+
 import {
   GET_ERRORS,
   SET_CURRENT_USER,
@@ -69,4 +71,5 @@ export const logoutUser = () => dispatch => {
   setAuthToken(false);
   // isAuthenticated to false
   dispatch(setCurrentUser({}));
+  appSessionStorage.clear();
 }
