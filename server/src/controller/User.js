@@ -1,32 +1,36 @@
-const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 const { validateLoginInputs } = require("../validation/login");
 const { validateSignUpInputs } = require("../validation/signUp");
 
 const _getHashedPassword = async (password) => {
+  let hash = null;
   try {
     if (password) {
       const saltRound = 10;
-      return await bcrypt.hash(password, saltRound);
+      hash = await bcrypt.hash(password, saltRound);
     } else {
       throw new Error("password is undefined");
     }
   } catch (err) {
     console.error("Error hashing the password", err);
   }
+  return hash;
 };
 
 const _createToken = async (userRole) => {
+  let token = null;
   try {
     const payload = { userRole };
     const secret = process.env.JWT_SECRET;
     const options = { expiresIn: "2d" };
 
-    return await jwt.sign(payload, secret, options);
+    token = await jwt.sign(payload, secret, options);
   } catch (err) {
     console.error(err);
   }
+  return token;
 };
 
 /**
@@ -125,7 +129,7 @@ exports.postLogin = async (req, res) => {
     const user = await User.findOne({ email });
     if (user) {
       //validate passoword
-      const match = await bcrypt.compare(password, user.password);
+      const match = await bcrypt.compare(password, user.hashed_password);
 
       if (match) {
         //Create a token
@@ -188,10 +192,16 @@ exports.postSignup = async (req, res) => {
     }
 
     let { first_name, last_name, password, email, role } = req.body;
-    password = await _getHashedPassword(password);
+    const hashed_password = await _getHashedPassword(password);
     role = role || "customer";
 
-    const newUser = new User({ first_name, last_name, email, password, role });
+    const newUser = new User({
+      first_name,
+      last_name,
+      email,
+      hashed_password,
+      role,
+    });
 
     //Create a token
     const accessToken = await _createToken(newUser.role);
@@ -224,9 +234,9 @@ exports.postSignup = async (req, res) => {
 
 /**
  *  DELETE /user/:id
- *  Delet the user account
+ *  Delete the user data
  */
-exports.deleteAccount = async (req, res) => {
+exports.deleteUser = async (req, res) => {
   let result = {};
   let status = 204;
 
@@ -235,7 +245,7 @@ exports.deleteAccount = async (req, res) => {
     if (payload) {
       if (payload.userRole !== "admin") {
         const { id } = req.params;
-        const {deletedCount} = await User.deleteOne({ _id: id });
+        const { deletedCount } = await User.deleteOne({ _id: id });
         if (deletedCount) {
           result.data = {};
           result.status = status;
@@ -265,6 +275,68 @@ exports.deleteAccount = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
+    status = 500;
+    result.errors = [
+      {
+        title: "Server error",
+        message: "You may try again or wait till the error get resolve.",
+      },
+    ];
+  }
+  return res.status(status).json(result);
+};
+
+/**
+ *  PUT /user/:id
+ *  Update/Edit the user data
+ */
+exports.updateUser = async (req, res) => {
+  let result = {};
+  let status = 204;
+
+  try {
+    const payload = req.decoded;
+    if (payload) {
+      if (payload.userRole !== "admin") {
+        const { id } = req.params;
+        let { first_name, last_name, password, email, role } = req.body;
+        const hashed_password = await _getHashedPassword(password);
+        role = role || "customer";
+
+        const updatedData = await User.findOneAndUpdate(
+          { _id: id },
+          {
+            $set: { first_name, last_name, hashed_password, email, role },
+          }
+        );
+        if (updatedData) {
+          result.data = {};
+          result.status = status;
+        } else {
+          status = 400;
+          result.errors = [
+            {
+              title: "Bad Request",
+              message: "No user found for provided id",
+            },
+          ];
+        }
+      } else {
+        status = 403;
+        result.status = status;
+        result.error = "Only admin can update the resource";
+      }
+    } else {
+      status = 400;
+      result.status = status;
+      result.errors = [
+        {
+          title: "Bad Request",
+          message: "Provided payloads are invalid",
+        },
+      ];
+    }
+  } catch (err) {
     status = 500;
     result.errors = [
       {

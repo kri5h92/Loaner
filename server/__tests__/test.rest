@@ -9,10 +9,37 @@ POST http://localhost:3000/v1/login
 content-type: application/json 
 
 {
-    "email": "agent@test.com",
-    "password": "test1234"
+    "email": "first@test.com",
+    "password": "test@1234"
 }
 
 ###
 DELETE http://localhost:3000/v1/users/6043970ba2d2954b6c94f9fe
 Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1NTQwODMwLCJleHAiOjE2MTU3MTM2MzB9.0B0o8uIdnkWzjv91Rv_R8TK3qPbMI7jAgo6MzxVhJYE
+
+###
+PUT http://localhost:3000/v1/users/604cf54bb3376a62a1e6bc42
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1NzM3MTY4LCJleHAiOjE2MTU5MDk5Njh9.OZu8ATGuSnuOkD_oNW7q34MibFkcEJ9SAQurx7OcwHc
+content-type: application/json
+
+{
+    "first_name": "last",
+    "last_name": "benchers",
+    "email": "first@test.com",
+    "password": "test@1234",
+    "role":"customer"
+}
+
+###
+
+POST http://localhost:3000/v1/signup
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1NzM3MTY4LCJleHAiOjE2MTU5MDk5Njh9.OZu8ATGuSnuOkD_oNW7q34MibFkcEJ9SAQurx7OcwHc
+content-type: application/json
+
+{
+    "first_name": "last",
+    "last_name": "benchers",
+    "email": "agent5@test.com",
+    "password": "test@1234",
+    "role":"customer"
+}
