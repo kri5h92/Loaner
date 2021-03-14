@@ -20,7 +20,7 @@ const appLocalStorage = ((window)=>{
     }
     
     function _getKey(key){
-        return `${APP_NAME}_${key}`;
+        return `${APP_NAME}/${key}`;
     }
 
     function setItem(key,value){

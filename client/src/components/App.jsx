@@ -1,56 +1,28 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent } from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import PrivateRoute from '../private-route/PrivateRoute';
+import { BrowserRouter as Router} from 'react-router-dom';
 import store from '../store';
 import ErrorBoundary from './ErrorBoundary';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
-import Dashboard from './Dashboard';
+import routes from '../router/routes';
+import createRouter from '../router/createRouter';
+import setAuthToken from '../utils/setAuthToken';
+import {ACCESS_TOKEN} from '../utils/constants';
+import {appSessionStorage} from '../utils/storage/sessionStorage';
+
+const AppRouter = createRouter(routes);
+/**
+ * Reset default headers for axios api on page refresh 
+ */
+setAuthToken(appSessionStorage.getItem(ACCESS_TOKEN));
 
 class App extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      apiResponse: '',
-      dbResponse: ''
-    };
-  }
-
-  componentDidMount() {
-    this.callAPI();
-    this.callDB();
-  }
-
-  callAPI() {
-    fetch('/v1/testAPI')
-      .then((res) => res.text())
-      .then((res) => this.setState({ apiResponse: res }));
-  }
-
-  callDB() {
-    fetch('/v1/testDB')
-      .then((res) => res.text())
-      .then((res) => this.setState({ dbResponse: res }));
-  }
-
   render() {
     return (
       <Provider store={store}>
         <div className='bg-gray-100 min-h-screen'>
           <ErrorBoundary>
             <Router>
-              <Switch>
-                <Route exact path='/'>
-                  <SignIn />
-                </Route>
-                <Route exact path='/signup'>
-                  <SignUp />
-                </Route>
-                <PrivateRoute exact path='/dashboard'>
-                  <Dashboard />
-                </PrivateRoute>
-              </Switch>
+              <AppRouter />
             </Router>
           </ErrorBoundary>
         </div>

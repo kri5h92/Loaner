@@ -1,7 +1,7 @@
 import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
 import {appSessionStorage} from "../utils/storage/sessionStorage";
-
+import {ACCESS_TOKEN} from '../utils/constants';
 import {
   GET_ERRORS,
   SET_CURRENT_USER,
@@ -27,7 +27,8 @@ export const signUpUser = (userData, history) => dispatch => {
   .post("/v1/signup",userData)
     .then(res => {
 		dispatch(setUserLoading(false));
-		history.push("/")
+    history.push("/");
+    appSessionStorage.clear();
 	})
     .catch(err=>{
 	  dispatch(setUserLoading(false));
@@ -49,7 +50,8 @@ export const loginUser = (userData) => dispatch => {
       const data = res.data.data[0];
       // eslint-disable-next-line camelcase
       const {access_token} = data;
-      localStorage.setItem("jwtToken",access_token);
+      console.log(access_token);
+      appSessionStorage.setItem(ACCESS_TOKEN,access_token);
       setAuthToken(access_token);
       // Decode token to get user data
       // const decoded = jwt_decode(token);
@@ -67,7 +69,6 @@ export const loginUser = (userData) => dispatch => {
 }
 
 export const logoutUser = () => dispatch => {
-  localStorage.removeItem("jwtToken");
   setAuthToken(false);
   // isAuthenticated to false
   dispatch(setCurrentUser({}));

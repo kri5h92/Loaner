@@ -4,14 +4,14 @@ import Header from './Header';
 import Users from './Users';
 
 class Dashboard extends PureComponent {
-    render() {
-        return (
-            <>
-                <Header />
-                <Users />
-            </>
-        );
-    }
+  render() {
+    return (
+      <>
+        <Header />
+        <Users />
+      </>
+    );
+  }
 }
 
 export default Dashboard;

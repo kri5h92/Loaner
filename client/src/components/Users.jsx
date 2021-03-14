@@ -24,7 +24,7 @@ class Users extends Component {
       const users = await this.getUsers();
       if (!isEmpty(users)) {
         const {auth} = this.props;
-        let notLogedInUsers = users.filter(user => user._id !== auth.user._id);
+        const notLogedInUsers = users.filter(user => user._id !== auth.user._id);
         this.setState({ users: [...notLogedInUsers] });
       }
     })();
@@ -45,11 +45,7 @@ class Users extends Component {
     const accessToken = auth.user.access_token;
     let users = [];
     try {
-      const response = await axios.get('/v1/users/', {
-        headers: {
-          Authorization: `token ${accessToken}`
-        }
-      });
+      const response = await axios.get('/v1/users/');
       users = response.data.data;
     } catch (err) {
       console.error(err);
@@ -62,11 +58,7 @@ class Users extends Component {
     const accessToken = auth.user.access_token;
 
     try {
-      await axios.delete(`/v1/users/${id}`, {
-        headers: {
-          Authorization: `token ${accessToken}`
-        }
-      });
+      await axios.delete(`/v1/users/${id}`);
     } catch (err) {
       console.error(err);
       return false;
