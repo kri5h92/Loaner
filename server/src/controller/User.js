@@ -133,7 +133,7 @@ exports.postLogin = async (req, res) => {
       if (match) {
         //Create a token
         const accessToken = await _createToken(user.role);
-
+        console.log()
         // Update newly generated token in db
         await User.findByIdAndUpdate(user._id, { access_token: accessToken });
 
@@ -204,7 +204,7 @@ exports.postSignup = async (req, res) => {
 
     // Create a token
     const accessToken = await _createToken(newUser.role);
-    newUser.accessToken = accessToken;
+    newUser.access_token = accessToken;
 
     // save user
     await newUser.save();

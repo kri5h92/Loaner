@@ -10,7 +10,7 @@ POST http://localhost:3000/v1/login
 content-type: application/json 
 
 {
-    "email": "first@test.com",
+    "email": "agent2@test.com",
     "password": "test@1234"
 }
 
@@ -24,8 +24,8 @@ Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3
 content-type: application/json
 
 {
-    "first_name": "are",
-    "last_name": "love",
+    "first_name": "doctor",
+    "last_name": "lance",
     "email": "first@test.com",
     "password": "test@1234",
     "role":"customer"
@@ -40,7 +40,7 @@ content-type: application/json
 {
     "first_name": "last",
     "last_name": "benchers",
-    "email": "agent5@test.com",
+    "email": "agent2@test.com",
     "password": "test@1234",
     "role":"customer"
 }
