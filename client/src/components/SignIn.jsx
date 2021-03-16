@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { loginUser } from '../actions/authActions';
-import LoadingModal from './shared/Modal/LoadingModal';
+import LoadingModal from './shared/modals/LoadingModal';
 
 class SignIn extends Component {
   constructor(props) {

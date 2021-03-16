@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { signUpUser } from '../actions/authActions';
-import LoadingModal from './shared/Modal/LoadingModal';
+import LoadingModal from './shared/modals/LoadingModal';
 
 class SignUp extends Component {
   constructor(props) {
@@ -24,37 +24,37 @@ class SignUp extends Component {
     }
     return null;
   }
-  
+
   componentDidUpdate(prevProps, prevState) {
-    const {errors} = this.state;
-    const {auth} = this.props;
-    
-    if (prevProps.auth !== auth){
-      if(auth.loading){
-        this.setState({showModal: true})
-      }else{
+    const { errors } = this.state;
+    const { auth } = this.props;
+
+    if (prevProps.auth !== auth) {
+      if (auth.loading) {
+        this.setState({ showModal: true });
+      } else {
         this.setState({ showModal: false });
-      } 
+      }
     }
-    
-    if(prevState.errors !== errors){		
-	  	this.setState(()=>{
-			  errors
-		  });
-  	}
+
+    if (prevState.errors !== errors) {
+      this.setState(() => {
+        errors;
+      });
+    }
   }
 
-  handleRoleBtnClick(e){
-    const {className} =  e.target;
+  handleRoleBtnClick(e) {
+    const { className } = e.target;
     console.log(className);
-    if(className.includes('customer')){
+    if (className.includes('customer')) {
       this.setState({
         userRole: 'customer'
-      })
-    }else if(className.includes('agent')){
+      });
+    } else if (className.includes('agent')) {
       this.setState({
         userRole: 'agent'
-      })
+      });
     }
     return;
   }
@@ -62,7 +62,7 @@ class SignUp extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { signUpUser, history } = this.props;
-    const {userRole} = this.state;
+    const { userRole } = this.state;
     const payloads = {
       first_name: this.first_name.value,
       last_name: this.last_name.value,
@@ -80,17 +80,29 @@ class SignUp extends Component {
   }
 
   render() {
-    const {showModal,userRole} = this.state;
+    const { showModal, userRole } = this.state;
 
     const roleTemplate = (
-      <div className="h-screen flex flex-col justify-center items-center">
-        <h1 className="text-4xl">How would you like to join us ?</h1>
-        <div className="p-8 flex justify-around items-center gap-4 text-white">
-          <button className="customer py-3 px-4 bg-black hover:bg-gray-800" onClick={this.handleRoleBtnClick} type="button">As Customer</button>
-          <button className="agent py-3 px-4 bg-black hover:bg-gray-800" onClick={this.handleRoleBtnClick} type="button">As Agent</button>
+      <div className='h-screen flex flex-col justify-center items-center'>
+        <h1 className='text-4xl'>How would you like to join us ?</h1>
+        <div className='p-8 flex justify-around items-center gap-4 text-white'>
+          <button
+            className='customer py-3 px-4 bg-black hover:bg-gray-800'
+            onClick={this.handleRoleBtnClick}
+            type='button'
+          >
+            As Customer
+          </button>
+          <button
+            className='agent py-3 px-4 bg-black hover:bg-gray-800'
+            onClick={this.handleRoleBtnClick}
+            type='button'
+          >
+            As Agent
+          </button>
         </div>
-      </div>  
-    )
+      </div>
+    );
 
     const signUpFormTemplate = (
       <div className='p-8 min-h-screen'>
@@ -108,7 +120,7 @@ class SignUp extends Component {
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='first-name' className='text-lg'>
                   First Name
-                  </label>
+                </label>
                 <input
                   type='text'
                   id='first-name'
@@ -125,7 +137,7 @@ class SignUp extends Component {
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='last-name' className='text-lg'>
                   Last Name
-                  </label>
+                </label>
                 <input
                   type='text'
                   id='last-name'
@@ -143,7 +155,7 @@ class SignUp extends Component {
             <div className='flex flex-col space-y-1 mt-2'>
               <label htmlFor='email' className='text-lg'>
                 Email
-                </label>
+              </label>
               <input
                 type='email'
                 id='email'
@@ -161,7 +173,7 @@ class SignUp extends Component {
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='password' className='text-lg'>
                   Password
-                  </label>
+                </label>
                 <input
                   type='password'
                   id='password'
@@ -178,7 +190,7 @@ class SignUp extends Component {
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='password2' className='text-lg'>
                   Confirm Password
-                  </label>
+                </label>
                 <input
                   type='password'
                   id='password2'
@@ -198,27 +210,24 @@ class SignUp extends Component {
               className='py-2 mt-4 bg-black font-bold text-white focus:ring-2 border-none hover:bg-gray-800'
             >
               Sign Up
-              </button>
+            </button>
           </form>
           <footer className='text-sm space-y-2 mt-6 text-center'>
             <p>
               Already have an account?
-                <Link
-                to='/'
-                className='underline font-semibold hover:text-blue-800'
-              >
+              <Link to='/' className='underline font-semibold hover:text-blue-800'>
                 Sign In
-                </Link>
+              </Link>
             </p>
           </footer>
         </div>
       </div>
-    )
+    );
 
     return (
       <section className='sign-up'>
         {showModal && <LoadingModal />}
-        {userRole.length === 0 ? roleTemplate: signUpFormTemplate} 
+        {userRole.length === 0 ? roleTemplate : signUpFormTemplate}
       </section>
     );
   }
