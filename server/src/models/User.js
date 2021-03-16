@@ -44,7 +44,7 @@ userSchema.virtual("full_name").get(function () {
 
 // Virutual for User url
 userSchema.virtual("url").get(function () {
-  return "catalog/user/" + this._id;
+  return `catalog/user/${this._id}`;
 });
 
 // Virutual for User type

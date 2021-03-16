@@ -72,7 +72,6 @@ exports.getUsers = async (req, res) => {
     if (payload) {
       if (payload.userRole !== "admin") {
         const users = [...(await User.find({}))];
-
         result.data = users;
         result.status = status;
         res.status(status).json(result);
@@ -203,11 +202,11 @@ exports.postSignup = async (req, res) => {
       role,
     });
 
-    //Create a token
+    // Create a token
     const accessToken = await _createToken(newUser.role);
     newUser.accessToken = accessToken;
 
-    //save user
+    // save user
     await newUser.save();
 
     const { _id, type } = newUser;
@@ -237,7 +236,7 @@ exports.postSignup = async (req, res) => {
  *  Delete the user data
  */
 exports.deleteUser = async (req, res) => {
-  let result = {};
+  const result = {};
   let status = 204;
 
   try {
@@ -291,8 +290,8 @@ exports.deleteUser = async (req, res) => {
  *  Update/Edit the user data
  */
 exports.updateUser = async (req, res) => {
-  let result = {};
-  let status = 204;
+  const result = {};
+  let status = 201;
 
   try {
     const payload = req.decoded;
@@ -303,14 +302,21 @@ exports.updateUser = async (req, res) => {
         const hashed_password = await _getHashedPassword(password);
         role = role || "customer";
 
-        const updatedData = await User.findOneAndUpdate(
+        const userData = await User.findOneAndUpdate(
           { _id: id },
           {
-            $set: { first_name, last_name, hashed_password, email, role },
+            first_name,
+            last_name,
+            hashed_password,
+            email,
+            role,
+          },
+          {
+            new: true,
           }
         );
-        if (updatedData) {
-          result.data = {};
+        if (userData) {
+          result.data = [userData];
           result.status = status;
         } else {
           status = 400;

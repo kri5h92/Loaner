@@ -3,7 +3,8 @@ GET http://localhost:3000/v1/
 
 ###
 GET http://localhost:3000/v1/users
-Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1NTQwODMwLCJleHAiOjE2MTU3MTM2MzB9.0B0o8uIdnkWzjv91Rv_R8TK3qPbMI7jAgo6MzxVhJYE
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1OTA4MDcxLCJleHAiOjE2MTYwODA4NzF9.bJ0UXILCsA2o22MXctK_kSDbxxpburO-zsLqMuGpshM
+
 ###
 POST http://localhost:3000/v1/login
 content-type: application/json 
@@ -19,12 +20,12 @@ Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3
 
 ###
 PUT http://localhost:3000/v1/users/604cf54bb3376a62a1e6bc42
-Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1NzM3MTY4LCJleHAiOjE2MTU5MDk5Njh9.OZu8ATGuSnuOkD_oNW7q34MibFkcEJ9SAQurx7OcwHc
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE1OTEwMjQ2LCJleHAiOjE2MTYwODMwNDZ9.QJt9-vhUVxjsvaBk7gX2drANdTsTQVOTr0JgiRbS0Xg
 content-type: application/json
 
 {
-    "first_name": "last",
-    "last_name": "benchers",
+    "first_name": "are",
+    "last_name": "love",
     "email": "first@test.com",
     "password": "test@1234",
     "role":"customer"
