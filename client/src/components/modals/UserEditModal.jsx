@@ -1,17 +1,19 @@
 /* eslint-disable camelcase */
 import React, { Component } from 'react';
+import {toast} from 'react-toastify';
+
 import RootModal from '../shared/modals/RootModal';
-import axios from 'axios';
+import { apiUsers } from '../../services/api';
 
 class UserEditModal extends Component {
   constructor(props) {
     super(props);
-    // eslint-disable-next-line react/destructuring-assignment
+    const { userData } = this.props;
     this.state = {
-      first_name: this.props.userData.first_name,
-      last_name: this.props.userData.last_name,
-      email: this.props.userData.email,
-      role: this.props.userData.role
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      email: userData.email,
+      role: userData.role
     };
 
     this.roleOptions = [
@@ -29,42 +31,44 @@ class UserEditModal extends Component {
       }
     ];
 
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.updateUser = this.updateUser.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+    this._handleSubmit = this._handleSubmit.bind(this);
+    this._handleChange = this._handleChange.bind(this);
+    this._updateUser = this._updateUser.bind(this);
+    this._handleClose = this._handleClose.bind(this);
   }
 
-  handleChange(e) {
+  _handleChange(e) {
     e.preventDefault();
     const { name, value } = e.target;
     this.setState(() => ({ [name]: value }));
   }
 
-  handleClose(e) {
+  _handleClose(e) {
     e.preventDefault();
     const { closeModal } = this.props;
     closeModal();
   }
 
-  async handleSubmit(e) {
+  async _handleSubmit(e) {
     e.preventDefault();
 
     const { closeModal, saveUserEditData, userData } = this.props;
 
-    const userPayloads = this.state;
-    const data = await this.updateUser(userData._id, userPayloads);
+    const userPayloads = { ...this.state };
+    const data = await this._updateUser(userData._id, userPayloads);
     saveUserEditData(data);
     closeModal();
   }
 
-  async updateUser(userId, payloads) {
+  async _updateUser(userId, payloads) {
     let data = {};
     try {
-      const response = await axios.put(`/v1/users/${userId}`, payloads);
-      data = response.data.data[0];
+      const response = await apiUsers.put(userId, payloads);
+      data = response.data[0];
+      toast.success('User successfully updated');
     } catch (err) {
       console.error(err);
+      toast.error('Unable to update user');
     }
     return data;
   }
@@ -82,7 +86,7 @@ class UserEditModal extends Component {
           <button
             type='button'
             className='appearance-none absolute top-4 right-8 hover:text-gray-600'
-            onClick={this.handleClose}
+            onClick={this._handleClose}
           >
             <svg
               height='24'
@@ -104,7 +108,7 @@ class UserEditModal extends Component {
           <form
             action=''
             noValidate
-            onSubmit={this.handleSubmit}
+            onSubmit={this._handleSubmit}
             className='flex flex-col mt-8 w-full'
           >
             <div className='flex flex-wrap justify-between gap-2'>
@@ -116,7 +120,7 @@ class UserEditModal extends Component {
                   type='text'
                   id='first-name'
                   name='first_name'
-                  onChange={this.handleChange}
+                  onChange={this._handleChange}
                   value={first_name}
                   className='px-3 py-2 border text-gray-700 focus:ring-2 shadow-md outline-none'
                   placeholder='Your first name'
@@ -132,7 +136,7 @@ class UserEditModal extends Component {
                   type='text'
                   id='last-name'
                   name='last_name'
-                  onChange={this.handleChange}
+                  onChange={this._handleChange}
                   value={last_name}
                   className='px-3 py-2 border text-gray-700 focus:ring-2 shadow-md outline-none'
                   placeholder='Your last name'
@@ -149,7 +153,7 @@ class UserEditModal extends Component {
                 type='email'
                 id='email'
                 name='email'
-                onChange={this.handleChange}
+                onChange={this._handleChange}
                 value={email}
                 className='px-3 py-2 border text-gray-700 focus:ring-2 shadow-md outline-none'
                 placeholder='your@email.com'
@@ -164,7 +168,7 @@ class UserEditModal extends Component {
               <select
                 name='role'
                 id=''
-                onChange={this.handleChange}
+                onChange={this._handleChange}
                 className='px-3 py-2 border text-gray-700 focus:ring-2 shadow-md outline-none'
                 value={role.toLowerCase()}
               >

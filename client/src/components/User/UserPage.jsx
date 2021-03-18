@@ -1,12 +1,14 @@
 // eslint-disable class-methods-use-this
 
 import React, { Component } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import isEmpty from 'is-empty';
 import uniqid from 'uniqid';
+import { toast } from 'react-toastify';
+
 import UserEditModal from '../modals/UserEditModal';
+import { apiUsers } from '../../services/api';
 
 class UserPage extends Component {
   constructor(props) {
@@ -17,8 +19,8 @@ class UserPage extends Component {
     };
 
     this.userEditData = {};
-    this.getUsers = this.getUsers.bind(this);
-    this.deleteUser = this.deleteUser.bind(this);
+    this._getUsers = this._getUsers.bind(this);
+    this._deleteUser = this._deleteUser.bind(this);
     this.handleUserDeletion = this.handleUserDeletion.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
     this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -26,14 +28,7 @@ class UserPage extends Component {
   }
 
   componentDidMount() {
-    (async () => {
-      const users = await this.getUsers();
-      if (!isEmpty(users)) {
-        const { auth } = this.props;
-        const notLogedInUsers = users.filter((user) => user._id !== auth.user._id);
-        this.setState({ users: [...notLogedInUsers] });
-      }
-    })();
+    this._getUsers();
   }
 
   handleOpenModal(user) {
@@ -46,35 +41,38 @@ class UserPage extends Component {
   }
 
   async handleUserDeletion(id) {
-    const isDeleted = await this.deleteUser(id);
+    const isDeleted = await this._deleteUser(id);
     if (isDeleted) {
       const users = this.state.users.filter((user) => user._id !== id);
       this.setState({ users });
-    } else {
-      console.error('Unable to delete the user :(');
     }
   }
 
   // -------------API CALLS-----------
-  async getUsers() {
+  async _getUsers() {
     let users = [];
     try {
-      const response = await axios.get('/v1/users/');
-      users = response.data.data;
+      const res = await apiUsers.getAll();
+      users = res.data;
+      
+      /** show all users except logedIn */
+      if (!isEmpty(users)) {
+        const { auth } = this.props;
+        const notLogedInUsers = users.filter((user) => user._id !== auth.user._id);
+        this.setState({ users: [...notLogedInUsers] });
+      }
     } catch (err) {
       console.error(err);
     }
-    return users;
   }
 
-  async deleteUser(id) {
-    const { auth } = this.props;
-    const accessToken = auth.user.access_token;
-
+  async _deleteUser(id) {
     try {
-      await axios.delete(`/v1/users/${id}`);
+      await apiUsers.delete(id);
+      toast.success('User successfully deleted');
     } catch (err) {
       console.error(err);
+      toast.delete('Unable to delete the user');
       return false;
     }
     return true;
