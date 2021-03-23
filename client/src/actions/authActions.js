@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 
 import { authLogin, authSignUp } from '../services/api';
 import setAuthToken from '../utils/setAuthToken';
-import { appSessionStorage } from '../utils/storage/sessionStorage';
+import { appLocalStorage } from '../utils/storage';
 import { ACCESS_TOKEN } from '../utils/constants';
 import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from './types';
 
@@ -24,7 +24,6 @@ export const signUpUser = (userData, history) => (dispatch) => {
     .post(userData)
     .then(() => {
       dispatch(setUserLoading(false));
-      appSessionStorage.clear();
       toast.success('User successfully registered');
       history.push('/');
     })
@@ -33,7 +32,7 @@ export const signUpUser = (userData, history) => (dispatch) => {
       dispatch(setUserLoading(false));
       dispatch({
         type: GET_ERRORS,
-        payload: err
+        payload: err.response.data.errors
       });
     });
 };
@@ -48,7 +47,7 @@ export const loginUser = (userData) => (dispatch) => {
       const data = res.data[0];
       // eslint-disable-next-line camelcase
       const { access_token } = data;
-      appSessionStorage.setItem(ACCESS_TOKEN, access_token);
+      appLocalStorage.setItem(ACCESS_TOKEN, access_token);
       setAuthToken(access_token);
       // Decode token to get user data
       // const decoded = jwt_decode(token);
@@ -61,9 +60,9 @@ export const loginUser = (userData) => (dispatch) => {
       dispatch(setUserLoading(false));
       dispatch({
         type: GET_ERRORS,
-        payload: err
+        payload: err.response.data.errors
       });
-      toast.error('Unable to loged in');
+      // toast.error('Unable to loged in');
     });
 };
 
@@ -71,6 +70,6 @@ export const logoutUser = () => (dispatch) => {
   setAuthToken(false);
   // isAuthenticated to false
   dispatch(setCurrentUser({}));
-  appSessionStorage.clear();
+  appLocalStorage.clear();
   toast.success('Log out successfully');
 };

@@ -25,6 +25,7 @@ class UserPage extends Component {
     this.handleCloseModal = this.handleCloseModal.bind(this);
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.saveUserEditData = this.saveUserEditData.bind(this);
+    this.handleAddNewClick = this.handleAddNewClick.bind(this);
   }
 
   componentDidMount() {
@@ -46,6 +47,11 @@ class UserPage extends Component {
       const users = this.state.users.filter((user) => user._id !== id);
       this.setState({ users });
     }
+  }
+
+  handleAddNewClick(){
+    const {history} = this.props;
+    history.push('add');
   }
 
   // -------------API CALLS-----------
@@ -105,7 +111,13 @@ class UserPage extends Component {
             saveUserEditData={this.saveUserEditData}
           />
         )}
-        <div className='users p-8'>
+        <section>
+            <h4>Users</h4>
+              <button onClick={this.handleAddNewClick}>
+                Add new
+              </button>
+        </section>
+        <section className='users p-8'>
           <table className='table-auto w-full'>
             <thead>
               <tr className='text-left bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>
@@ -157,6 +169,7 @@ class UserPage extends Component {
                         type='button'
                         className='w-4 transform hover:text-gray-800 hover:scale-110'
                         onClick={this.handleOpenModal.bind(null, user)}
+                        title='Edit'
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
@@ -176,6 +189,7 @@ class UserPage extends Component {
                         type='button'
                         className='w-4 transform hover:text-red-800 hover:scale-110'
                         onClick={this.handleUserDeletion.bind(null, user._id)}
+                        title='Delete'
                       >
                         <svg
                           xmlns='http://www.w3.org/2000/svg'
@@ -197,7 +211,7 @@ class UserPage extends Component {
               ))}
             </tbody>
           </table>
-        </div>
+        </section>
       </>
     );
   }

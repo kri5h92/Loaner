@@ -1,9 +1,11 @@
 /* eslint-disable camelcase */
 import React, { Component } from 'react';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 
 import RootModal from '../shared/modals/RootModal';
 import { apiUsers } from '../../services/api';
+import { validateUserEditFormFields } from '../../validation/userEdit';
+import FormFieldValidationErr from '../shared/FormFieldValidationErr';
 
 class UserEditModal extends Component {
   constructor(props) {
@@ -13,7 +15,8 @@ class UserEditModal extends Component {
       first_name: userData.first_name,
       last_name: userData.last_name,
       email: userData.email,
-      role: userData.role
+      role: userData.role,
+      validationErrors: {}
     };
 
     this.roleOptions = [
@@ -54,10 +57,18 @@ class UserEditModal extends Component {
 
     const { closeModal, saveUserEditData, userData } = this.props;
 
-    const userPayloads = { ...this.state };
-    const data = await this._updateUser(userData._id, userPayloads);
-    saveUserEditData(data);
-    closeModal();
+    const { validationErrors, ...rest } = { ...this.state };
+    const userPayloads = rest;
+
+    const { errors, isValid } = validateUserEditFormFields({ ...userPayloads });
+
+    if (!isValid) {
+      this.setState({ validationErrors: errors });
+    } else {
+      const data = await this._updateUser(userData._id, userPayloads);
+      saveUserEditData(data);
+      closeModal();
+    }
   }
 
   async _updateUser(userId, payloads) {
@@ -75,7 +86,7 @@ class UserEditModal extends Component {
 
   render() {
     const { isOpen } = this.props;
-    const { first_name, last_name, email, role } = this.state;
+    const { first_name, last_name, email, role, validationErrors } = this.state;
 
     return isOpen ? (
       <RootModal>
@@ -126,7 +137,7 @@ class UserEditModal extends Component {
                   placeholder='Your first name'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div>  */}
+                <FormFieldValidationErr error={validationErrors.first_name} />
               </div>
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='last-name' className='text-lg'>
@@ -142,7 +153,7 @@ class UserEditModal extends Component {
                   placeholder='Your last name'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+                <FormFieldValidationErr error={validationErrors.last_name} />
               </div>
             </div>
             <div className='flex flex-col space-y-1 mt-2'>
@@ -159,7 +170,7 @@ class UserEditModal extends Component {
                 placeholder='your@email.com'
                 required
               />
-              {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+              <FormFieldValidationErr error={validationErrors.email} />
             </div>
             <div className='flex flex-col space-y-1 mt-2'>
               <label htmlFor='email' className='text-lg'>
@@ -178,7 +189,6 @@ class UserEditModal extends Component {
                   </option>
                 ))}
               </select>
-              {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
             </div>
             <button
               type='submit'

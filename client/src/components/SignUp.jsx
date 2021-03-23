@@ -2,14 +2,18 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { signUpUser } from '../actions/authActions';
+import { signUpUser,purgeErrors } from '../actions';
 import LoadingModal from './shared/modals/LoadingModal';
+import { validateSignUpFormFields } from '../validation/signUp';
+import FormFieldValidationErr from './shared/FormFieldValidationErr'
+import ApiErrorsRender from './shared/ApiErrorsRender';
 
 class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      errors: {},
+      apiErrors: [],
+      validationErrors: {},
       showModal: false,
       userRole: ''
     };
@@ -18,15 +22,20 @@ class SignUp extends Component {
     this.handleRoleBtnClick = this.handleRoleBtnClick.bind(this);
   }
 
+  componentDidMount() {
+    const {purgeErrors} = this.props;
+    purgeErrors();
+  }
+
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.errors !== prevState.errors) {
-      return { errors: nextProps.errors };
+    if (nextProps.apiErrors !== prevState.apiErrors) {
+      return { apiErrors: nextProps.apiErrors };
     }
     return null;
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { errors } = this.state;
+    const { apiErrors } = this.state;
     const { auth } = this.props;
 
     if (prevProps.auth !== auth) {
@@ -37,16 +46,13 @@ class SignUp extends Component {
       }
     }
 
-    if (prevState.errors !== errors) {
-      this.setState(() => {
-        errors;
-      });
+    if (prevState.apiErrors !== apiErrors) {
+      this.setState({ apiErrors });
     }
   }
 
   handleRoleBtnClick(e) {
     const { className } = e.target;
-    console.log(className);
     if (className.includes('customer')) {
       this.setState({
         userRole: 'customer'
@@ -72,7 +78,12 @@ class SignUp extends Component {
       role: userRole
     };
 
-    signUpUser(payloads, history);
+    const { errors, isValid } = validateSignUpFormFields({ ...payloads });
+    if (!isValid) {
+      this.setState({ validationErrors: errors });
+    } else {
+      signUpUser(payloads, history);
+    }
   }
 
   setTextInputRef(element) {
@@ -80,8 +91,7 @@ class SignUp extends Component {
   }
 
   render() {
-    const { showModal, userRole } = this.state;
-
+    const { showModal, userRole, validationErrors, apiErrors } = this.state;
     const roleTemplate = (
       <div className='h-screen flex flex-col justify-center items-center'>
         <h1 className='text-4xl'>How would you like to join us ?</h1>
@@ -116,6 +126,7 @@ class SignUp extends Component {
             onSubmit={this.handleSubmit}
             className='flex flex-col mt-16 w-full'
           >
+            <ApiErrorsRender errors={apiErrors} />
             <div className='flex flex-wrap justify-between gap-2'>
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='first-name' className='text-lg'>
@@ -132,7 +143,7 @@ class SignUp extends Component {
                   placeholder='Your first name'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div>  */}
+                <FormFieldValidationErr error={validationErrors.first_name} />
               </div>
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='last-name' className='text-lg'>
@@ -149,7 +160,7 @@ class SignUp extends Component {
                   placeholder='Your last name'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+                <FormFieldValidationErr error={validationErrors.last_name} />
               </div>
             </div>
             <div className='flex flex-col space-y-1 mt-2'>
@@ -167,7 +178,7 @@ class SignUp extends Component {
                 placeholder='your@email.com'
                 required
               />
-              {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+              <FormFieldValidationErr error={validationErrors.email} />
             </div>
             <div className='flex flex-wrap justify-between gap-2'>
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
@@ -185,7 +196,7 @@ class SignUp extends Component {
                   placeholder='Your Password'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+                <FormFieldValidationErr error={validationErrors.password} />
               </div>
               <div className='flex flex-col flex-1 space-y-1 mt-2'>
                 <label htmlFor='password2' className='text-lg'>
@@ -202,7 +213,7 @@ class SignUp extends Component {
                   placeholder='Your Password Confirmation'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+                <FormFieldValidationErr error={validationErrors.password2} />
               </div>
             </div>
             <button
@@ -235,13 +246,14 @@ class SignUp extends Component {
 
 SignUp.propTypes = {
   auth: PropTypes.shape({}).isRequired,
-  signUpUser: PropTypes.func.isRequired
+  signUpUser: PropTypes.func.isRequired,
+  purgeErrors: PropTypes.func.isRequired,
 };
 
 // allow us to call this.props.auth || this.props.errors
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  errors: state.errors
+  apiErrors: state.errors,
 });
 
-export default connect(mapStateToProps, { signUpUser })(withRouter(SignUp));
+export default connect(mapStateToProps, { signUpUser,purgeErrors })(withRouter(SignUp));

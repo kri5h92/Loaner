@@ -1,3 +1,5 @@
+import { filterErrors } from './error';
+
 export function handleResponse(response) {
   if (response.results) {
     return response.results;
@@ -11,9 +13,11 @@ export function handleResponse(response) {
 }
 
 export function handleError(error) {
-  if (error.data) {
-    return error.data;
+  if (error.response && error.response.status === 422) {
+    const { errors } = error.response.data;
+    if (errors) {
+      error.response.data.errors = filterErrors(errors);
+    }
   }
-
-  return error;
+  throw error;
 }

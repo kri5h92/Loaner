@@ -2,8 +2,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { loginUser } from '../actions/authActions';
+
+import FormFieldValidationErr from './shared/FormFieldValidationErr';
+import { loginUser,purgeErrors } from '../actions';
+import {validateSignInFormFields} from '../validation/signIn';
 import LoadingModal from './shared/modals/LoadingModal';
+import ApiErrorsRender from './shared/ApiErrorsRender';
 
 class SignIn extends Component {
   constructor(props) {
@@ -11,7 +15,8 @@ class SignIn extends Component {
     this.state = {
       email: '',
       password: '',
-      errors: {},
+      apiErrors: [],
+      validationErrors: {},
       showModal: false
     };
 
@@ -19,9 +24,14 @@ class SignIn extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidMount(){
+    const {purgeErrors} = this.props;
+    purgeErrors();
+  }
+
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.errors !== prevState.errors) {
-      return { errors: nextProps.errors };
+    if (nextProps.apiErrors !== prevState.apiErrors) {
+      return { apiErrors: nextProps.apiErrors };
     }
 
     return null;
@@ -29,8 +39,7 @@ class SignIn extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { auth, history } = this.props;
-    const { errors } = this.state;
-
+    const { apiErrors } = this.state;
     if (prevProps.auth !== auth) {
       auth.loading
         ? this.setState({ showModal: true })
@@ -41,10 +50,8 @@ class SignIn extends Component {
       }
     }
 
-    if (prevState.errors !== errors) {
-      this.setState(() => {
-        errors;
-      });
+    if (prevState.apiErrors !== apiErrors) {
+      this.setState({apiErrors});
     }
   }
 
@@ -65,11 +72,18 @@ class SignIn extends Component {
       password
     };
 
-    loginUser(payloads);
+    const { errors, isValid } = validateSignInFormFields({ ...payloads });
+    if (!isValid) {
+      this.setState({ validationErrors: errors });
+    } else {
+      loginUser(payloads);
+      this.setState({validationErrors: {}});
+    }
+
   }
 
   render() {
-    const { password, email, showModal } = this.state;
+    const { password, email, showModal,validationErrors,apiErrors } = this.state;
 
     return (
       <section className='sign-in'>
@@ -83,7 +97,9 @@ class SignIn extends Component {
               action=''
               onSubmit={this.handleSubmit}
               className='flex flex-col mt-16 w-full'
+              noValidate
             >
+              <ApiErrorsRender errors={apiErrors}/>
               <div className='flex flex-col space-y-1 mt-2'>
                 <label htmlFor='email' className='text-lg'>
                   Email
@@ -98,7 +114,7 @@ class SignIn extends Component {
                   placeholder='your@email.com'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+                <FormFieldValidationErr error={validationErrors.email}/>
               </div>
               <div className='flex flex-col space-y-1 mt-2'>
                 <label htmlFor='password' className='text-lg'>
@@ -114,7 +130,7 @@ class SignIn extends Component {
                   placeholder='Your Password'
                   required
                 />
-                {/* <div className="border px-3 py-1 border-red-200 bg-red-200 text-red-800">Error</div> */}
+                <FormFieldValidationErr error={validationErrors.password}/>
               </div>
               <button
                 type='submit'
@@ -143,12 +159,13 @@ class SignIn extends Component {
 
 SignIn.propTypes = {
   auth: PropTypes.shape({}).isRequired,
-  loginUser: PropTypes.func.isRequired
+  loginUser: PropTypes.func.isRequired,
+  purgeErrors: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  errors: state.errors
+  apiErrors: state.errors
 });
 
-export default connect(mapStateToProps, { loginUser })(withRouter(SignIn));
+export default connect(mapStateToProps, { loginUser,purgeErrors })(withRouter(SignIn));

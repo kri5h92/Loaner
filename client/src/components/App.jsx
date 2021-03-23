@@ -10,13 +10,13 @@ import routes from '../router/routes';
 import createRouter from '../router/createRouter';
 import setAuthToken from '../utils/setAuthToken';
 import { ACCESS_TOKEN } from '../utils/constants';
-import { appSessionStorage } from '../utils/storage/sessionStorage';
+import { appLocalStorage } from '../utils/storage';
 
 const AppRouter = createRouter(routes);
 /**
  * Reset default headers for axios api on page refresh
  */
-setAuthToken(appSessionStorage.getItem(ACCESS_TOKEN));
+setAuthToken(appLocalStorage.getItem(ACCESS_TOKEN));
 
 class App extends PureComponent {
   render() {
