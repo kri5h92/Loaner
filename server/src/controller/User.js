@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { validateLoginInputs } = require("../validation/login");
 const { validateSignUpInputs } = require("../validation/signUp");
+const { validateUserCreateORUpdateInputs } = require("../validation/user");
 
 const _getHashedPassword = async (password) => {
   let hash = null;
@@ -34,7 +35,7 @@ const _createToken = async (userRole) => {
 };
 
 /**
- * GET /user/:id
+ * GET v1/user/:id
  * Return the user data
  */
 exports.getUser = async (req, res) => {
@@ -59,7 +60,7 @@ exports.getUser = async (req, res) => {
 };
 
 /**
- * GET /users
+ * GET v1/users
  * Return all users from database
  */
 exports.getUsers = async (req, res) => {
@@ -108,7 +109,7 @@ exports.getUsers = async (req, res) => {
 };
 
 /**
- *  POST /login
+ *  POST v1/login
  *  login using email and password
  */
 exports.postLogin = async (req, res) => {
@@ -133,7 +134,7 @@ exports.postLogin = async (req, res) => {
       if (match) {
         //Create a token
         const accessToken = await _createToken(user.role);
-        console.log()
+        console.log();
         // Update newly generated token in db
         await User.findByIdAndUpdate(user._id, { access_token: accessToken });
 
@@ -174,7 +175,7 @@ exports.postLogin = async (req, res) => {
 };
 
 /**
- *  POST /signup
+ *  POST v1/signup
  *  Create a new user account
  */
 exports.postSignup = async (req, res) => {
@@ -232,7 +233,7 @@ exports.postSignup = async (req, res) => {
 };
 
 /**
- *  DELETE /user/:id
+ *  DELETE v1/user/:id
  *  Delete the user data
  */
 exports.deleteUser = async (req, res) => {
@@ -286,7 +287,7 @@ exports.deleteUser = async (req, res) => {
 };
 
 /**
- *  PUT /user/:id
+ *  PUT v1/users/:id
  *  Update/Edit the user data
  */
 exports.updateUser = async (req, res) => {
@@ -298,16 +299,13 @@ exports.updateUser = async (req, res) => {
     if (payload) {
       if (payload.userRole !== "admin") {
         const { id } = req.params;
-        let { first_name, last_name, password, email, role } = req.body;
-        const hashed_password = await _getHashedPassword(password);
-        role = role || "customer";
+        let { first_name, last_name, email, role } = req.body;
 
         const userData = await User.findOneAndUpdate(
           { _id: id },
           {
             first_name,
             last_name,
-            hashed_password,
             email,
             role,
           },
@@ -343,6 +341,7 @@ exports.updateUser = async (req, res) => {
       ];
     }
   } catch (err) {
+    console.log(err);
     status = 500;
     result.errors = [
       {
@@ -350,6 +349,74 @@ exports.updateUser = async (req, res) => {
         message: "You may try again or wait till the error get resolve.",
       },
     ];
+  }
+  return res.status(status).json(result);
+};
+
+/**
+ * POST v1/users/
+ * Create a new user
+ */
+exports.createUser = async (req, res) => {
+  const result = {};
+  let status = 201;
+
+  try {
+    const payload = req.decoded;
+    if (payload) {
+      if (payload.userRole !== "admin") {
+        const { isValid, errors } = validateUserCreateORUpdateInputs(req.body);
+
+        if (!isValid) {
+          status = 422;
+          result.errors = errors;
+          return res.status(status).json(result);
+        }
+
+        let { first_name, last_name, email, role } = req.body;
+
+        const newUser = new User({
+          first_name,
+          last_name,
+          email,
+          role,
+        });
+
+        //save new user
+        await newUser.save();
+
+        result.data = [newUser];
+        result.status = status;
+      } else {
+        status = 403;
+        result.status = status;
+        result.error = "Only admin can create the new user";
+      }
+    } else {
+      status = 400;
+      result.status = status;
+      result.errors = [
+        {
+          title: "Bad Request",
+          message: "Provided payloads are invalid",
+        },
+      ];
+    }
+  } catch (err) {
+    console.log(err);
+
+    if (err.name === "ValidationError") {
+      status = 422;
+      result.errors = [{ ...err.errors }];
+    } else {
+      status = 500;
+      result.errors = [
+        {
+          title: "Server error",
+          message: "You may try again or wait till the error get resolve.",
+        },
+      ];
+    }
   }
   return res.status(status).json(result);
 };

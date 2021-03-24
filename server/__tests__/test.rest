@@ -3,13 +3,26 @@ GET http://localhost:3000/v1/
 
 ###
 GET http://localhost:3000/v1/users
-Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE2MzQwODc4LCJleHAiOjE2MTY1MTM2Nzh9.jiG4vIaZwzoBXX8a-wdB4L3F2CXmWM6BNH5jDAKPB6o
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE2NTQ3MzE4LCJleHAiOjE2MTY3MjAxMTh9.IIMssGKt6ihAjjzoyq-7CBjhDJiNyYl2xvbUxRK4amU
+
+###
+POST http://localhost:3000/v1/users
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE2NTQ3MzE4LCJleHAiOjE2MTY3MjAxMTh9.IIMssGKt6ihAjjzoyq-7CBjhDJiNyYl2xvbUxRK4amU
+content-type: application/json
+
+{
+    "first_name": "",
+    "last_name": "",
+    "email": "adsfasfd",
+    "role":"asdf"
+}
+
 ###
 POST http://localhost:3000/v1/login
 content-type: application/json 
 
 {
-    "email": "admin@.com",
+    "email": "shubhamyadav.70007@outlook.com",
     "password": "test@1234"
 }
 
@@ -19,7 +32,7 @@ Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3
 
 ###
 PUT http://localhost:3000/v1/users/604cf54bb3376a62a1e6bc42
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE2MzQwODc4LCJleHAiOjE2MTY1MTM2Nzh9.jiG4vIaZwzoBXX8a-wdB4L3F2CXmWM6BNH5jDAKPB6o
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjE2NTQ3MzE4LCJleHAiOjE2MTY3MjAxMTh9.IIMssGKt6ihAjjzoyq-7CBjhDJiNyYl2xvbUxRK4amU
 content-type: application/json
 
 {
@@ -31,14 +44,13 @@ content-type: application/json
 }
 
 ###
-
 POST http://localhost:3000/v1/signup
 content-type: application/json
 
 {
-    "first_name": "",
-    "last_name": "",
+    "first_name": "shubham ",
+    "last_name": "yadav",
     "email": "agent2@test.com",
-    "password": "",
+    "password": "test@1234",
     "role":"customer"
 }
