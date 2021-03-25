@@ -2,17 +2,27 @@
   "name": "server",
   "version": "0.0.0",
   "private": true,
+  "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production nodemon --exec babel-node ./index.js",
+    "build": "npm run clean && npm run build-babel",
+    "build-babel": "babel ./src --out-dir ./dist --source-maps",
+    "clean": "rm -rf dist",
+    "start": "cross-env NODE_ENV=production node ./index.js",
     "dev": "cross-env NODE_ENV=development nodemon --exec babel-node ./index.js",
+    "debug": "node --inspect-brk ./dist/app.js",
     "dboff": "killall mongod",
     "dbon": "pgrep mongod || (mkdir -p ./.DB_Store ./logs && mongod --dbpath ./.DB_Store --fork --logpath ./logs/db.startup.log)",
     "test": "jest --runInBand"
+  },
+  "engines": {
+    "node": "12.x.x",
+    "npm": "6.14.11"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
@@ -26,10 +36,10 @@
     "validator": "^13.5.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.13.10",
     "@babel/core": "^7.12.17",
     "@babel/node": "^7.12.17",
     "@babel/preset-env": "^7.12.17",
-    "cross-env": "^7.0.3",
     "eslint": "^7.20.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "8.0.0",
