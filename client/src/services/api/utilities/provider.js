@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { handleResponse, handleError } from './response';
-import { API_LOCATION } from '../../../utils/constants';
+
+const { API_LOCATION } = process.env;
 
 axios.defaults.headers['Content-Type'] = 'application/json';
 axios.defaults.headers.language = 'en';

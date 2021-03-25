@@ -4,7 +4,8 @@ import isEmpty from 'is-empty';
 import { FORM_ERROR_MESSAGES } from './constants';
 
 export default {
-  required: () => (value = '') => (isEmpty(value) ? FORM_ERROR_MESSAGES.required : null),
+  required: () => (value = '') =>
+    isEmpty(value.trim()) ? FORM_ERROR_MESSAGES.required : null,
 
   isEmail: () => (value = '') => (!isEmail(value) ? FORM_ERROR_MESSAGES.isEmail : null),
 

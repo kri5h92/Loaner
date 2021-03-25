@@ -111,12 +111,6 @@ class UserPage extends Component {
             saveUserEditData={this.saveUserEditData}
           />
         )}
-        <section>
-            <h4>Users</h4>
-              <button onClick={this.handleAddNewClick}>
-                Add new
-              </button>
-        </section>
         <section className='users p-8'>
           <table className='table-auto w-full'>
             <thead>
