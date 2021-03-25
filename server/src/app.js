@@ -6,7 +6,6 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const mongoDB = require('./lib/mongo-db');
-const {insertUser} = require('./db/users');
 
 /**
  * Load environment variables from .env file
