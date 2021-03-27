@@ -17,9 +17,9 @@ module.exports = merge(common, {
     // change when actual code changes, not the webpack runtime.
     runtimeChunk: {
       name: 'runtime'
-    },
-    performance: {
-      hints: false
     }
+  },
+  performance: {
+    hints: false
   }
 });
