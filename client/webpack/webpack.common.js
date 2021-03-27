@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');
+const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -37,6 +37,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new Dotenv({ systemvars: true, path: paths.env }),
     // prevent deletion of assets define in CopyWebpackPlugin
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false
@@ -54,11 +55,6 @@ module.exports = {
 
     new HtmlWebpackPlugin({
       template: `${paths.src}/index.html`
-    }),
-
-    new webpack.DefinePlugin({
-      // it will automatically pick up key values from .env file
-      'process.env': JSON.stringify(dotenv.config().parsed)
     }),
 
     new webpack.ProvidePlugin({

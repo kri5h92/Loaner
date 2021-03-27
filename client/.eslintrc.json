@@ -32,7 +32,7 @@
         }
       }
     ],
-    "max-len": [2, 90],
+    // "max-len": [2, 104],
     "react/no-multi-comp": "off",
     "no-unused-vars": 2,
     "no-param-reassign": "off",
