@@ -5,7 +5,7 @@ export function handleResponse(response) {
     return response.results;
   }
 
-  if (response.data) {
+if (response.data) {
     return response.data;
   }
 

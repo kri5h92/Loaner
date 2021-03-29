@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter,Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logoutUser } from '../actions/authActions';
 
@@ -27,7 +27,7 @@ class Header extends Component {
             <div className="flex justify-between">
               <div className="nav__brand font-bold text-2xl">
                   {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                  <a href="#">KreditPay</a>
+                  <Link to='/'>KreditPay</Link>
               </div>
               <button type='button' className='hover:text-orange' onClick={this.handleLogoutClick}>
                   LogOut

@@ -11,7 +11,7 @@ module.exports = merge(common, {
     pathinfo: true,
     publicPath: '/'
   },
-  devtool: 'eval',
+  devtool: 'inline-source-map',
   devServer: {
     contentBase: paths.build,
     host: '0.0.0.0',

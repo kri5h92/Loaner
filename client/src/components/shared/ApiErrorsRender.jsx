@@ -8,7 +8,7 @@ class ApiErrorsRender extends PureComponent {
       <>
         {!isEmpty(errors) ? (
           <div className='border px-3 py-1 border-red-200 bg-red-200 text-red-800 rounded-sm'>
-            {errors.map(error=>error.message)}
+            {errors.map(error=><p>{error.message}</p>)}
           </div>
         ) : null}
       </>

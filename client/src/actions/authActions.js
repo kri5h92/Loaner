@@ -4,7 +4,8 @@ import { authLogin, authSignUp } from '../services/api';
 import setAuthToken from '../utils/setAuthToken';
 import { appLocalStorage } from '../utils/storage';
 import { ACCESS_TOKEN } from '../utils/constants';
-import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from './types';
+import { SET_CURRENT_USER, USER_LOADING } from './types';
+import {setErrors} from './errorActions';
 
 export const setCurrentUser = (decoded) => ({
   type: SET_CURRENT_USER,
@@ -30,10 +31,7 @@ export const signUpUser = (userData, history) => (dispatch) => {
     .catch((err) => {
       toast.error('Unable to register user');
       dispatch(setUserLoading(false));
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data.errors
-      });
+      dispatch(setErrors(err.response.data.errors));
     });
 };
 
@@ -58,10 +56,7 @@ export const loginUser = (userData) => (dispatch) => {
     })
     .catch((err) => {
       dispatch(setUserLoading(false));
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data.errors
-      });
+      dispatch(setErrors(err.response.data.errors));
       // toast.error('Unable to loged in');
     });
 };

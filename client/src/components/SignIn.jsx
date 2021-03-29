@@ -46,7 +46,7 @@ class SignIn extends Component {
         : this.setState({ showModal: false });
 
       if (auth.isAuthenticated) {
-        history.push('/dashboard');
+        history.push('/admin');
       }
     }
 

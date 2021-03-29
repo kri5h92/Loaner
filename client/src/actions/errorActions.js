@@ -1,7 +1,8 @@
-import { PURGE_ERRORS } from './types';
+import { PURGE_ERRORS, SET_ERRORS } from './types';
 
-export const purgeErrors = () => (dispatch) => {
-  dispatch({
-    type: PURGE_ERRORS
-  });
-};
+export const purgeErrors = () => ({ type: PURGE_ERRORS });
+
+export const setErrors = (errors) => ({
+  type: SET_ERRORS,
+  payload: errors
+});

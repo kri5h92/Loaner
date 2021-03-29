@@ -24,9 +24,11 @@ class ErrorBoundary extends Component {
 
     if (hasError) {
       return (
-        <h1 className='text-3xl font-bold text-center'>
-          Something is fishy :(
-        </h1>
+        <div className='h-screen flex flex-col justify-center items-center space-y-2'>
+          <p className='text-8xl'>🤔</p>
+          <p className='text-3xl font-bold text-center'>Something is fishy</p>
+          <p>Open the browser console to see what's gone wrong</p>
+        </div>
       );
     }
     // eslint-disable-next-line
