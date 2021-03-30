@@ -8,7 +8,8 @@ class ApiErrorsRender extends PureComponent {
       <>
         {!isEmpty(errors) ? (
           <div className='border px-3 py-1 border-red-200 bg-red-200 text-red-800 rounded-sm'>
-            {errors.map(error=><p>{error.message}</p>)}
+            {/* eslint-disable-next-line react/no-array-index-key */}
+            {errors.map((error,idx)=><p key={idx}>{error.message}</p>)}
           </div>
         ) : null}
       </>
