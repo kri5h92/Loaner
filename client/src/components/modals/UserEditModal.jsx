@@ -6,6 +6,8 @@ import RootModal from '../shared/modals/RootModal';
 import { apiUsers } from '../../services/api';
 import { validateUserEditFormFields } from '../../validation/userEdit';
 import FormFieldValidationErr from '../shared/FormFieldValidationErr';
+import LoadingModal from '../shared/modals/LoadingModal';
+import { selectRoleOptions } from '../../utils/user';
 
 class UserEditModal extends Component {
   constructor(props) {
@@ -16,24 +18,13 @@ class UserEditModal extends Component {
       last_name: userData.last_name,
       email: userData.email,
       role: userData.role,
-      validationErrors: {}
+      validationErrors: {},
+      loading: false
     };
 
-    this.roleOptions = [
-      {
-        value: 'admin',
-        label: 'Admin'
-      },
-      {
-        value: 'customer',
-        label: 'Customer'
-      },
-      {
-        value: 'agent',
-        label: 'Agent'
-      }
-    ];
+    this.roleOptions = selectRoleOptions;
 
+    this._setLoading = this._setLoading.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
     this._handleChange = this._handleChange.bind(this);
     this._updateUser = this._updateUser.bind(this);
@@ -57,7 +48,7 @@ class UserEditModal extends Component {
 
     const { closeModal, saveUserEditData, userData } = this.props;
 
-    const { validationErrors, ...rest } = { ...this.state };
+    const { validationErrors, loading, ...rest } = { ...this.state };
     const userPayloads = rest;
 
     const { errors, isValid } = validateUserEditFormFields({ ...userPayloads });
@@ -71,14 +62,19 @@ class UserEditModal extends Component {
     }
   }
 
+  _setLoading = (flag = false) => this.setState({ loading: flag });
+
   async _updateUser(userId, payloads) {
     let data = {};
+    this._setLoading(true);
     try {
       const response = await apiUsers.put(userId, payloads);
       data = response.data[0];
+      this._setLoading(false);
       toast.success('User successfully updated');
     } catch (err) {
       console.error(err);
+      this._setLoading(false);
       toast.error('Unable to update user');
     }
     return data;
@@ -86,10 +82,11 @@ class UserEditModal extends Component {
 
   render() {
     const { isOpen } = this.props;
-    const { first_name, last_name, email, role, validationErrors } = this.state;
+    const { first_name, last_name, email, role, validationErrors, loading } = this.state;
 
     return isOpen ? (
       <RootModal>
+        {loading && <LoadingModal type='DualRing' />}
         <div className='max-w-md mx-auto md:max-w-1/2 p-8 bg-white text-black relative'>
           <header className='space-y-4 text-center'>
             <h1 className='text-2xl font-bold tracking-wide'>User Details</h1>

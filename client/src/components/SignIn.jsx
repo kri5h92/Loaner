@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 
 import FormFieldValidationErr from './shared/FormFieldValidationErr';
-import { loginUser,purgeErrors } from '../actions';
-import {validateSignInFormFields} from '../validation/signIn';
+import { loginUser, purgeErrors } from '../actions';
+import { validateSignInFormFields } from '../validation/signIn';
 import LoadingModal from './shared/modals/LoadingModal';
 import ApiErrorsRender from './shared/ApiErrorsRender';
 
@@ -24,8 +24,8 @@ class SignIn extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount(){
-    const {purgeErrors} = this.props;
+  componentDidMount() {
+    const { purgeErrors } = this.props;
     purgeErrors();
   }
 
@@ -41,9 +41,11 @@ class SignIn extends Component {
     const { auth, history } = this.props;
     const { apiErrors } = this.state;
     if (prevProps.auth !== auth) {
-      auth.loading
-        ? this.setState({ showModal: true })
-        : this.setState({ showModal: false });
+      if (auth.loading) {
+        this.setState({ showModal: true });
+      } else {
+        this.setState({ showModal: false });
+      }
 
       if (auth.isAuthenticated) {
         history.push('/admin');
@@ -51,7 +53,7 @@ class SignIn extends Component {
     }
 
     if (prevState.apiErrors !== apiErrors) {
-      this.setState({apiErrors});
+      this.setState({ apiErrors });
     }
   }
 
@@ -77,17 +79,16 @@ class SignIn extends Component {
       this.setState({ validationErrors: errors });
     } else {
       loginUser(payloads);
-      this.setState({validationErrors: {}});
+      this.setState({ validationErrors: {} });
     }
-
   }
 
   render() {
-    const { password, email, showModal,validationErrors,apiErrors } = this.state;
+    const { password, email, showModal, validationErrors, apiErrors } = this.state;
 
     return (
       <section className='sign-in'>
-        {showModal && <LoadingModal />}
+        {showModal && <LoadingModal type='Infinity' />}
         <div className='p-8 min-h-screen'>
           <div className='max-w-md mx-auto md:max-w-1/2'>
             <header className='space-y-4 text-center'>
@@ -99,7 +100,7 @@ class SignIn extends Component {
               className='flex flex-col mt-16 w-full'
               noValidate
             >
-              <ApiErrorsRender errors={apiErrors}/>
+              <ApiErrorsRender errors={apiErrors} />
               <div className='flex flex-col space-y-1 mt-2'>
                 <label htmlFor='email' className='text-lg'>
                   Email
@@ -114,7 +115,7 @@ class SignIn extends Component {
                   placeholder='your@email.com'
                   required
                 />
-                <FormFieldValidationErr error={validationErrors.email}/>
+                <FormFieldValidationErr error={validationErrors.email} />
               </div>
               <div className='flex flex-col space-y-1 mt-2'>
                 <label htmlFor='password' className='text-lg'>
@@ -130,7 +131,7 @@ class SignIn extends Component {
                   placeholder='Your Password'
                   required
                 />
-                <FormFieldValidationErr error={validationErrors.password}/>
+                <FormFieldValidationErr error={validationErrors.password} />
               </div>
               <button
                 type='submit'
@@ -168,4 +169,4 @@ const mapStateToProps = (state) => ({
   apiErrors: state.errors
 });
 
-export default connect(mapStateToProps, { loginUser,purgeErrors })(withRouter(SignIn));
+export default connect(mapStateToProps, { loginUser, purgeErrors })(withRouter(SignIn));

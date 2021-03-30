@@ -20,7 +20,8 @@ class RootModal extends PureComponent {
   render() {
     const modalTemplate = (
 		<div className="fixed inset-0">
-			<div className="min-h-screen flex justify-center items-center bg-black bg-opacity-80 text-white">
+			<div className="min-h-screen flex justify-center items-center bg-black bg-opacity-40 text-white">
+				{/* eslint-disable-next-line react/destructuring-assignment */}
 				{this.props.children}
 			</div>
 		</div>

@@ -3,24 +3,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import isEmpty from 'is-empty';
 import uniqid from 'uniqid';
 import { toast } from 'react-toastify';
 
 import UserEditModal from '../modals/UserEditModal';
 import { apiUsers } from '../../services/api';
-
+import LoadingModal from '../shared/modals/LoadingModal';
 
 class UserPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       users: [],
-      isModalOpen: false
+      isModalOpen: false,
+      loading: false
     };
 
     this.userEditData = {};
+    this._setLoading = this._setLoading.bind(this);
     this._getUsers = this._getUsers.bind(this);
     this._deleteUser = this._deleteUser.bind(this);
     this.handleUserDeletion = this.handleUserDeletion.bind(this);
@@ -44,43 +46,53 @@ class UserPage extends Component {
   }
 
   async handleUserDeletion(id) {
+    const { users } = this.state;
     const isDeleted = await this._deleteUser(id);
     if (isDeleted) {
-      const users = this.state.users.filter((user) => user._id !== id);
-      this.setState({ users });
+      const usersList = users.filter((user) => user._id !== id);
+      this.setState({ users: usersList });
     }
   }
 
-  handleAddNewClick(){
-    const {history} = this.props;
+  handleAddNewClick() {
+    const { history } = this.props;
     history.push('users/add');
   }
+
+  _setLoading = (flag = false) => this.setState({ loading: flag });
 
   // -------------API CALLS-----------
   async _getUsers() {
     let users = [];
+    this._setLoading(true);
     try {
       const res = await apiUsers.getAll();
       users = res.data;
-      
+
       /** show all users except logedIn */
       if (!isEmpty(users)) {
         const { auth } = this.props;
         const notLogedInUsers = users.filter((user) => user._id !== auth.user._id);
         this.setState({ users: [...notLogedInUsers] });
       }
+      this._setLoading(false);
     } catch (err) {
+      toast.error('Unable to fetch the users');
+      this._setLoading(false);
       console.error(err);
     }
   }
 
   async _deleteUser(id) {
+    this._setLoading(true);
     try {
       await apiUsers.delete(id);
+      this._setLoading(false);
       toast.success('User successfully deleted');
     } catch (err) {
       console.error(err);
-      toast.delete('Unable to delete the user');
+      this._setLoading(false);
+      toast.error('Unable to delete the user');
       return false;
     }
     return true;
@@ -102,7 +114,7 @@ class UserPage extends Component {
   }
 
   render() {
-    const { users, isModalOpen } = this.state;
+    const { users, isModalOpen, loading } = this.state;
     return (
       <>
         {isModalOpen && (
@@ -113,6 +125,7 @@ class UserPage extends Component {
             saveUserEditData={this.saveUserEditData}
           />
         )}
+        {loading && <LoadingModal type='DualRing' />}
         <section className='users p-8'>
           <header className='users__header'>
             <div className='flex items-center justify-between bg-purple-700 px-4 py-6 text-white shadow-md rounded-md'>
@@ -141,7 +154,7 @@ class UserPage extends Component {
               </button>
             </div>
           </header>
-          <div className='users__content px-2'>
+          <div className='users__content px-2 relative'>
             <table className='table-auto w-full'>
               <thead>
                 <tr className='text-left bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>

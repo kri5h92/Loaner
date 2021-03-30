@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // extract css to files
 
 const paths = require('./paths');
 
@@ -13,9 +14,20 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/,
-        // postcss loader require for tailwind, webpack auto detect postcss.config.js
-        use: ['style-loader', 'css-loader', 'postcss-loader']
+        test: /\.(css|scss|sass)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader', // postcss loader needed for tailwindcss
+            options: {
+              postcssOptions: {
+                ident: 'postcss',
+                config: paths.postcss
+              }
+            }
+          }
+        ]
       },
       {
         test: /\.(js|jsx)$/,
@@ -38,6 +50,11 @@ module.exports = {
   },
   plugins: [
     new Dotenv({ systemvars: true, path: paths.env }),
+
+    new MiniCssExtractPlugin({
+      filename: 'styles/[name].[chunkhash].css',
+      chunkFilename: '[id].[chunkhash].css'
+    }),
     // prevent deletion of assets define in CopyWebpackPlugin
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false

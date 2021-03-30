@@ -1,10 +1,10 @@
-export const USER_ROLES = {
+export const USER_ROLES = Object.freeze({
   CUSTOMER: 'customer',
   AGENT: 'agent',
   ADMIN: 'admin'
-};
+});
 
-export const selectRoleOptions = [
+export const selectRoleOptions = Object.freeze([
   {
     value: USER_ROLES.ADMIN,
     label: 'Admin'
@@ -17,4 +17,4 @@ export const selectRoleOptions = [
     value: USER_ROLES.AGENT,
     label: 'Agent'
   }
-];
+]);
