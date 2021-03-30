@@ -52,8 +52,8 @@ module.exports = {
     new Dotenv({ systemvars: true, path: paths.env }),
 
     new MiniCssExtractPlugin({
-      filename: 'styles/[name].[contenthash].css',
-      chunkFilename: '[id].[contenthash].css'
+      filename: 'styles/[name].[chunkhash].css',
+      chunkFilename: '[id].[chunkhash].css'
     }),
     // prevent deletion of assets define in CopyWebpackPlugin
     new CleanWebpackPlugin({

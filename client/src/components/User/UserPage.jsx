@@ -46,10 +46,11 @@ class UserPage extends Component {
   }
 
   async handleUserDeletion(id) {
+    const { users } = this.state;
     const isDeleted = await this._deleteUser(id);
     if (isDeleted) {
-      const users = this.state.users.filter((user) => user._id !== id);
-      this.setState({ users });
+      const usersList = users.filter((user) => user._id !== id);
+      this.setState({ users: usersList });
     }
   }
 
@@ -76,6 +77,7 @@ class UserPage extends Component {
       }
       this._setLoading(false);
     } catch (err) {
+      toast.error('Unable to fetch the users');
       this._setLoading(false);
       console.error(err);
     }
@@ -90,7 +92,7 @@ class UserPage extends Component {
     } catch (err) {
       console.error(err);
       this._setLoading(false);
-      toast.delete('Unable to delete the user');
+      toast.error('Unable to delete the user');
       return false;
     }
     return true;
