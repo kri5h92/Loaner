@@ -1,16 +1,29 @@
-# react-webpack-starter
+# kreditpay frontend
 
-This is a react application starting template with integration of webpack.
+This submodule contain the kreditpay frontend logic.
 
-## Quick Start
+## Quick Setup
 
 ```bash
-# Install packages
-npm install
+## Install dependencies
+$ npm install
 
-# Run server
-npm start
+## Create env file
+$ cp env.sample .env
 
-# Create build
-npm build
+## Run Server
+$ npm run dev
+
+## Create Build
+$ npm run build
 ```
+
+## Environment Variable Setup
+
+Below is the default config
+
+```
+API_LOCATION=http://localhost:3000/
+```
+
+You can change this according to your need.
