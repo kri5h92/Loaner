@@ -6,5 +6,6 @@
   "eslint.workingDirectories": [
       "./client",
       "./server"
-  ]
+  ],
+  "git.ignoreLimitWarning": true
 }

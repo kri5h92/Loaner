@@ -49,7 +49,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new Dotenv({ systemvars: true, path: paths.env }),
+    new Dotenv({ systemvars: false, path: paths.env }),
 
     new MiniCssExtractPlugin({
       filename: 'styles/[name].[chunkhash].css',
