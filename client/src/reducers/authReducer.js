@@ -1,32 +1,55 @@
-import isEmpty from "is-empty";
-import {
-  SET_CURRENT_USER,
-  USER_LOADING
-} from "../actions/types";
+import isEmpty from 'is-empty';
+import { actionTypes } from '../common/constants';
 
 const initialState = {
   isAuthenticated: false,
   user: {},
   loading: false,
-}
+  errors: []
+};
 
-export default function(state = initialState, action){
-  switch(action.type){
-    case SET_CURRENT_USER:
+export default function (state = initialState, { type, payload }) {
+  switch (type) {
+    case actionTypes.SIGNUP_USER_REQUEST:
+    case actionTypes.LOGIN_USER_REQUEST:
       return {
         ...state,
-        isAuthenticated: !isEmpty(action.payload),
-        user: action.payload
+        loading: true
       };
 
-    case USER_LOADING:
+    case actionTypes.SIGNUP_USER_SUCCESS:
+    case actionTypes.LOGIN_USER_SUCCESS:
       return {
         ...state,
-        loading: action.flag,
+        loading: false,
+        errors: []
       };
 
-    default:
-      return state;
+    case actionTypes.SIGNUP_USER_FAILURE:
+    case actionTypes.LOGIN_USER_FAILURE:
+      return {
+        ...state,
+        errors: payload,
+        loading: false
+      };
+
+    case actionTypes.SET_CURRENT_USER:
+      return {
+        ...state,
+        isAuthenticated: !isEmpty(payload),
+        user: payload
+      };
+
+    case actionTypes.UNSET_CURRENT_USER:
+      return {
+        ...state,
+        isAuthenticated: !isEmpty(payload),
+        user: payload
+      };
+
+    default: {
+      break;
+    }
   }
-
+  return state;
 }

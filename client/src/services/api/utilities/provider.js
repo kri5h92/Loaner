@@ -3,7 +3,7 @@ import { handleResponse, handleError } from './response';
 
 axios.defaults.headers['Content-Type'] = 'application/json';
 axios.defaults.headers.language = 'en';
-axios.defaults.baseURL = process.env.API_LOCATION;
+axios.defaults.baseURL = 'http://localhost:3000/';
 
 const getSingle = (resource, id) =>
   axios({

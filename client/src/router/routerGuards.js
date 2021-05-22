@@ -1,5 +1,5 @@
 import { appLocalStorage } from '../utils/storage';
-import { ACCESS_TOKEN } from '../utils/constants';
+import { ACCESS_TOKEN } from '../common/constants';
 
 export default {
   mustBeAuthorized: () => {

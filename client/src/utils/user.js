@@ -1,10 +1,6 @@
-export const USER_ROLES = Object.freeze({
-  CUSTOMER: 'customer',
-  AGENT: 'agent',
-  ADMIN: 'admin'
-});
+import { USER_ROLES } from '../common/constants';
 
-export const selectRoleOptions = Object.freeze([
+export const getUserRoleOptions = () => [
   {
     value: USER_ROLES.ADMIN,
     label: 'Admin'
@@ -17,4 +13,4 @@ export const selectRoleOptions = Object.freeze([
     value: USER_ROLES.AGENT,
     label: 'Agent'
   }
-]);
+];

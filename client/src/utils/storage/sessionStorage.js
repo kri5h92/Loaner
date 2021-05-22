@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 
-import { APP_NAME } from '../constants';
+import { APP_NAME } from '../../common/constants';
 
 const appSessionStorage = ((window) => {
   function _storageAvailable(type) {

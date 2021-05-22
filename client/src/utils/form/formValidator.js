@@ -3,7 +3,7 @@ import isEmpty from 'is-empty';
 
 import { FORM_ERROR_MESSAGES } from './constants';
 
-export default {
+export const formValidator = {
   required: () => (value = '') =>
     isEmpty(value.trim()) ? FORM_ERROR_MESSAGES.required : null,
 

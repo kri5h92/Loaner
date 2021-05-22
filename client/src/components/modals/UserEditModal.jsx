@@ -7,7 +7,7 @@ import { apiUsers } from '../../services/api';
 import { validateUserEditFormFields } from '../../validation/userEdit';
 import FormFieldValidationErr from '../shared/FormFieldValidationErr';
 import LoadingModal from '../shared/modals/LoadingModal';
-import { selectRoleOptions } from '../../utils/user';
+import { getUserRoleOptions } from '../../utils/user';
 
 class UserEditModal extends Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class UserEditModal extends Component {
       loading: false
     };
 
-    this.roleOptions = selectRoleOptions;
+    this.roleOptions = getUserRoleOptions();
 
     this._setLoading = this._setLoading.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);

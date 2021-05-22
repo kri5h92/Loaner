@@ -4,13 +4,13 @@ import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { apiUsers } from '../../services/api';
-import { selectRoleOptions } from '../../utils/user';
+import { getUserRoleOptions } from '../../utils/user';
 import { purgeErrors, setErrors } from '../../actions';
 import { validateUserAddFormFields } from '../../validation/userAdd';
 import ApiErrorsRender from '../shared/ApiErrorsRender';
 import FormFieldValidationErr from '../shared/FormFieldValidationErr';
 import LoadingModal from '../shared/modals/LoadingModal';
-import { SUBMIT_BTN_TYPE } from '../../utils/constants';
+import { SUBMIT_BTN_TYPE } from '../../common/constants';
 
 class UserAdd extends Component {
   constructor(props) {
@@ -20,7 +20,7 @@ class UserAdd extends Component {
       first_name: '',
       last_name: '',
       email: '',
-      role: selectRoleOptions[0].value,
+      role: '',
       validationErrors: {},
       apiErrors: [],
       submitBtnClickType: '',
@@ -28,7 +28,7 @@ class UserAdd extends Component {
     };
 
     this.state = { ...this.initialState };
-    this.roleOptions = selectRoleOptions;
+    this.roleOptions = getUserRoleOptions();
 
     this._setLoading = this._setLoading.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
