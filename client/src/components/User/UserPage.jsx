@@ -4,36 +4,31 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import isEmpty from 'is-empty';
 import uniqid from 'uniqid';
-import { toast } from 'react-toastify';
 
 import UserEditModal from '../modals/UserEditModal';
-import { apiUsers } from '../../services/api';
 import LoadingModal from '../shared/modals/LoadingModal';
+import { fetchUsers, deleteUser } from '../../actions/userActions';
+import { updateUser } from '../../actions';
 
 class UserPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: [],
-      isModalOpen: false,
-      loading: false
+      isModalOpen: false
     };
 
     this.userEditData = {};
-    this._setLoading = this._setLoading.bind(this);
-    this._getUsers = this._getUsers.bind(this);
-    this._deleteUser = this._deleteUser.bind(this);
     this.handleUserDeletion = this.handleUserDeletion.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
     this.handleOpenModal = this.handleOpenModal.bind(this);
-    this.saveUserEditData = this.saveUserEditData.bind(this);
     this.handleAddNewClick = this.handleAddNewClick.bind(this);
+    this.handleUserUpdate = this.handleUserUpdate.bind(this);
   }
 
   componentDidMount() {
-    this._getUsers();
+    const { dispatch } = this.props;
+    dispatch(fetchUsers());
   }
 
   handleOpenModal(user) {
@@ -45,13 +40,9 @@ class UserPage extends Component {
     this.setState({ isModalOpen: false });
   }
 
-  async handleUserDeletion(id) {
-    const { users } = this.state;
-    const isDeleted = await this._deleteUser(id);
-    if (isDeleted) {
-      const usersList = users.filter((user) => user._id !== id);
-      this.setState({ users: usersList });
-    }
+  handleUserDeletion(id) {
+    const { dispatch } = this.props;
+    dispatch(deleteUser({ id }));
   }
 
   handleAddNewClick() {
@@ -59,73 +50,30 @@ class UserPage extends Component {
     history.push('users/add');
   }
 
-  _setLoading = (flag = false) => this.setState({ loading: flag });
-
-  // -------------API CALLS-----------
-  async _getUsers() {
-    let users = [];
-    this._setLoading(true);
-    try {
-      const res = await apiUsers.getAll();
-      users = res.data;
-
-      /** show all users except logedIn */
-      if (!isEmpty(users)) {
-        const { auth } = this.props;
-        const notLogedInUsers = users.filter((user) => user._id !== auth.user._id);
-        this.setState({ users: [...notLogedInUsers] });
-      }
-      this._setLoading(false);
-    } catch (err) {
-      toast.error('Unable to fetch the users');
-      this._setLoading(false);
-      console.error(err);
-    }
-  }
-
-  async _deleteUser(id) {
-    this._setLoading(true);
-    try {
-      await apiUsers.delete(id);
-      this._setLoading(false);
-      toast.success('User successfully deleted');
-    } catch (err) {
-      console.error(err);
-      this._setLoading(false);
-      toast.error('Unable to delete the user');
-      return false;
-    }
-    return true;
-  }
-
-  // ----------END APICALLS------------
-
-  saveUserEditData(updatedUser) {
-    if (updatedUser) {
-      const { users } = this.state;
-      const updatedUsersList = users.map((user) => {
-        if (user._id === updatedUser._id) {
-          return updatedUser;
-        }
-        return user;
-      });
-      this.setState({ users: updatedUsersList });
-    }
+  handleUserUpdate(id, data) {
+    const { dispatch } = this.props;
+    dispatch(updateUser({ id, data }));
   }
 
   render() {
-    const { users, isModalOpen, loading } = this.state;
+    const { isModalOpen } = this.state;
+    const { loading, users, auth } = this.props;
+
+    const _notAuthUser = users.filter((user) => user._id !== auth.user._id);
+
     return (
       <>
         {isModalOpen && (
           <UserEditModal
             isOpen={isModalOpen}
+            loading={loading}
             closeModal={this.handleCloseModal}
             userData={this.userEditData}
-            saveUserEditData={this.saveUserEditData}
+            handleUserUpdate={this.handleUserUpdate}
           />
         )}
         {loading && <LoadingModal type='DualRing' />}
+
         <section className='users p-8'>
           <header className='users__header'>
             <div className='flex items-center justify-between bg-purple-700 px-4 py-6 text-white shadow-md rounded-md'>
@@ -166,7 +114,7 @@ class UserPage extends Component {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {_notAuthUser.map((user) => (
                   <tr
                     key={uniqid()}
                     className='border-b border-gray-200 bg-gray-50 hover:bg-gray-100'
@@ -256,11 +204,26 @@ class UserPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  auth: state.auth
+  auth: state.auth,
+  users: state.user.users,
+  loading: state.user.loading,
+  apiErrors: state.user.errors
 });
 
 UserPage.propTypes = {
-  auth: PropTypes.shape({}).isRequired
+  auth: PropTypes.shape({}).isRequired,
+  loading: PropTypes.bool.isRequired,
+  users: PropTypes.array,
+  apiErrors: PropTypes.arrayOf(PropTypes.object),
+  users: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string,
+      first_name: PropTypes.string,
+      last_name: PropTypes.string,
+      email: PropTypes.string,
+      role: PropTypes.string
+    })
+  )
 };
 
 export default connect(mapStateToProps)(withRouter(UserPage));

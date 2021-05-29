@@ -14,7 +14,8 @@ export default function (state = initialState, { type, payload }) {
     case actionTypes.LOGIN_USER_REQUEST:
       return {
         ...state,
-        loading: true
+        loading: true,
+        errors: []
       };
 
     case actionTypes.SIGNUP_USER_SUCCESS:
@@ -29,7 +30,7 @@ export default function (state = initialState, { type, payload }) {
     case actionTypes.LOGIN_USER_FAILURE:
       return {
         ...state,
-        errors: payload,
+        errors: payload.errors,
         loading: false
       };
 
@@ -37,14 +38,14 @@ export default function (state = initialState, { type, payload }) {
       return {
         ...state,
         isAuthenticated: !isEmpty(payload),
-        user: payload
+        user: payload.data
       };
 
     case actionTypes.UNSET_CURRENT_USER:
       return {
         ...state,
-        isAuthenticated: !isEmpty(payload),
-        user: payload
+        isAuthenticated: false,
+        user: {}
       };
 
     default: {

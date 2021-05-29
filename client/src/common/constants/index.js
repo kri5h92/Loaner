@@ -20,20 +20,38 @@ export const actionTypes = Object.freeze(
 
     LOGOUT_USER: undefined,
     SET_CURRENT_USER: undefined,
-    UNSET_CURRENT_USER: undefined
+    UNSET_CURRENT_USER: undefined,
+
+    CREATE_USER: undefined,
+    CREATE_USER_REQUEST: undefined,
+    CREATE_USER_SUCCESS: undefined,
+    CREATE_USER_FAILURE: undefined,
+
+    FETCH_USERS: undefined,
+    FETCH_USERS_REQUEST: undefined,
+    FETCH_USERS_SUCCESS: undefined,
+    FETCH_USERS_FAILURE: undefined,
+
+    DELETE_USER: undefined,
+    DELETE_USER_REQUEST: undefined,
+    DELETE_USER_SUCCESS: undefined,
+    DELETE_USER_FAILURE: undefined,
+
+    UPDATE_USER: undefined,
+    UPDATE_USER_REQUEST: undefined,
+    UPDATE_USER_SUCCESS: undefined,
+    UPDATE_USER_FAILURE: undefined
   })
 );
 
 /**
  *  USER
  */
-export const USER_ROLES = Object.freeze(
-  keyMirror({
-    CUSTOMER: undefined,
-    AGENT: undefined,
-    ADMIN: undefined
-  })
-);
+export const USER_ROLES = Object.freeze({
+  CUSTOMER: 'customer',
+  AGENT: 'agent',
+  ADMIN: 'admin'
+});
 
 /**
  * Miscellaneous

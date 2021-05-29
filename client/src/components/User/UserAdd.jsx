@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
-import { apiUsers } from '../../services/api';
 import { getUserRoleOptions } from '../../utils/user';
-import { purgeErrors, setErrors } from '../../actions';
 import { validateUserAddFormFields } from '../../validation/userAdd';
 import ApiErrorsRender from '../shared/ApiErrorsRender';
 import FormFieldValidationErr from '../shared/FormFieldValidationErr';
 import LoadingModal from '../shared/modals/LoadingModal';
 import { SUBMIT_BTN_TYPE } from '../../common/constants';
+import { createUser } from '../../actions';
 
 class UserAdd extends Component {
   constructor(props) {
@@ -22,9 +20,7 @@ class UserAdd extends Component {
       email: '',
       role: '',
       validationErrors: {},
-      apiErrors: [],
-      submitBtnClickType: '',
-      loading: false
+      submitBtnClickType: ''
     };
 
     this.state = { ...this.initialState };
@@ -34,29 +30,7 @@ class UserAdd extends Component {
     this._handleSubmit = this._handleSubmit.bind(this);
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.apiErrors !== prevState.apiErrors) {
-      return { apiErrors: nextProps.apiErrors };
-    }
-
-    return null;
-  }
-
-  componentDidMount() {
-    const { purgeErrors } = this.props;
-    purgeErrors();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { apiErrors } = this.state;
-    if (apiErrors !== prevState.apiErrors) {
-      this.setState({ apiErrors });
-    }
-  }
-
   _resetState = () => this.setState({ ...this.initialState });
-
-  _setLoading = (flag = false) => this.setState({ loading: flag });
 
   _handleChange = (e) => {
     e.preventDefault();
@@ -77,7 +51,7 @@ class UserAdd extends Component {
     e.preventDefault();
 
     const { first_name, last_name, email, role, submitBtnClickType } = this.state;
-    const { setErrors, history } = this.props;
+    const { history, dispatch } = this.props;
 
     const data = {
       first_name,
@@ -91,35 +65,16 @@ class UserAdd extends Component {
     if (!isValid) {
       this.setState({ validationErrors: errors });
     } else {
-      this._setLoading(true);
-      try {
-        this.setState({ apiErrors: [] });
-        await apiUsers.post(data);
-
-        toast.success('User created successfully');
-        this._resetState();
-        this._setLoading(false);
-
-        if (submitBtnClickType === SUBMIT_BTN_TYPE.SAVE) {
-          history.push('/admin/dashboard');
-        }
-      } catch (err) {
-        this._setLoading(false);
-        setErrors(err.response.data.errors);
+      dispatch(createUser({ data }));
+      if (submitBtnClickType === SUBMIT_BTN_TYPE.SAVE) {
+        history.push('/admin/dashboard');
       }
     }
   };
 
   render() {
-    const {
-      first_name,
-      last_name,
-      email,
-      role,
-      apiErrors,
-      validationErrors,
-      loading
-    } = this.state;
+    const { first_name, last_name, email, role, validationErrors } = this.state;
+    const { apiErrors, loading } = this.props;
 
     return (
       <>
@@ -196,11 +151,11 @@ class UserAdd extends Component {
                   id='role'
                   onChange={this._handleChange}
                   className='px-3 py-2 border text-gray-700 focus:ring-2 shadow-md outline-none'
-                  value={role.toLowerCase()}
+                  value={role}
                 >
                   {this.roleOptions.map((role, idx) => (
                     // eslint-disable-next-line react/no-array-index-key
-                    <option key={idx} value={role.value}>
+                    <option key={idx} default={idx === 0} value={role.value}>
                       {role.label}
                     </option>
                   ))}
@@ -233,12 +188,8 @@ class UserAdd extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  apiErrors: state.errors
+  apiErrors: state.user.errors,
+  loading: state.user.loading
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setErrors: (errors) => dispatch(setErrors(errors)),
-  purgeErrors: () => dispatch(purgeErrors())
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UserAdd));
+export default connect(mapStateToProps, null)(withRouter(UserAdd));

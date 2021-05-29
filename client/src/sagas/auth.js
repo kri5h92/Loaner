@@ -27,7 +27,7 @@ export function* signupUser({ payload }) {
     history.push('/');
   } catch (err) {
     console.error(err);
-    yield put(signupUserFailure(err));
+    yield put(signupUserFailure({ errors: err }));
     toast.error('Unable to register the user');
   }
 }
@@ -40,14 +40,14 @@ export function* loginUser({ payload }) {
     const { access_token } = data;
 
     yield setAuthToken(access_token);
-    yield put(setCurrentUser(data));
+    yield put(setCurrentUser({ data }));
     yield put(loginUserSuccess());
 
     toast.success('User successfully loged in');
     history.push('/admin');
   } catch (err) {
     console.log(err);
-    yield put(loginUserFailure(err));
+    yield put(loginUserFailure({ errors: err }));
     toast.error('Unable to loged in');
   }
 }
