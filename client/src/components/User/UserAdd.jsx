@@ -26,7 +26,6 @@ class UserAdd extends Component {
     this.state = { ...this.initialState };
     this.roleOptions = getUserRoleOptions();
 
-    this._setLoading = this._setLoading.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
   }
 
