@@ -8,3 +8,8 @@ export const filterObj = (obj, cb) => {
   });
   return newObj;
 };
+
+export const capitalize = (s) => {
+  if (typeof s !== 'string') return '';
+  return s[0].toUpperCase() + s.slice(1).toLowerCase();
+};

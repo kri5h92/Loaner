@@ -1,20 +1,17 @@
-export const USER_ROLES = Object.freeze({
-  CUSTOMER: 'customer',
-  AGENT: 'agent',
-  ADMIN: 'admin'
-});
+import { USER_ROLES } from '../common/constants';
+import { capitalize } from './helper';
 
-export const selectRoleOptions = Object.freeze([
+export const getUserRoleOptions = () => [
   {
     value: USER_ROLES.ADMIN,
-    label: 'Admin'
+    label: capitalize(USER_ROLES.ADMIN)
   },
   {
     value: USER_ROLES.CUSTOMER,
-    label: 'Customer'
+    label: capitalize(USER_ROLES.CUSTOMER)
   },
   {
     value: USER_ROLES.AGENT,
-    label: 'Agent'
+    label: capitalize(USER_ROLES.AGENT)
   }
-]);
+];
