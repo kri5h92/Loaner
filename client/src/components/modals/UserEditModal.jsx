@@ -1,13 +1,11 @@
 /* eslint-disable camelcase */
 import React, { Component } from 'react';
-import { toast } from 'react-toastify';
 
 import RootModal from '../shared/modals/RootModal';
-import { apiUsers } from '../../services/api';
 import { validateUserEditFormFields } from '../../validation/userEdit';
 import FormFieldValidationErr from '../shared/FormFieldValidationErr';
 import LoadingModal from '../shared/modals/LoadingModal';
-import { selectRoleOptions } from '../../utils/user';
+import { getUserRoleOptions } from '../../utils/user';
 
 class UserEditModal extends Component {
   constructor(props) {
@@ -18,16 +16,13 @@ class UserEditModal extends Component {
       last_name: userData.last_name,
       email: userData.email,
       role: userData.role,
-      validationErrors: {},
-      loading: false
+      validationErrors: {}
     };
 
-    this.roleOptions = selectRoleOptions;
+    this.roleOptions = getUserRoleOptions();
 
-    this._setLoading = this._setLoading.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
     this._handleChange = this._handleChange.bind(this);
-    this._updateUser = this._updateUser.bind(this);
     this._handleClose = this._handleClose.bind(this);
   }
 
@@ -46,7 +41,7 @@ class UserEditModal extends Component {
   async _handleSubmit(e) {
     e.preventDefault();
 
-    const { closeModal, saveUserEditData, userData } = this.props;
+    const { closeModal, handleUserUpdate, userData } = this.props;
 
     const { validationErrors, loading, ...rest } = { ...this.state };
     const userPayloads = rest;
@@ -56,33 +51,14 @@ class UserEditModal extends Component {
     if (!isValid) {
       this.setState({ validationErrors: errors });
     } else {
-      const data = await this._updateUser(userData._id, userPayloads);
-      saveUserEditData(data);
+      handleUserUpdate(userData._id, userPayloads);
       closeModal();
     }
   }
 
-  _setLoading = (flag = false) => this.setState({ loading: flag });
-
-  async _updateUser(userId, payloads) {
-    let data = {};
-    this._setLoading(true);
-    try {
-      const response = await apiUsers.put(userId, payloads);
-      data = response.data[0];
-      this._setLoading(false);
-      toast.success('User successfully updated');
-    } catch (err) {
-      console.error(err);
-      this._setLoading(false);
-      toast.error('Unable to update user');
-    }
-    return data;
-  }
-
   render() {
-    const { isOpen } = this.props;
-    const { first_name, last_name, email, role, validationErrors, loading } = this.state;
+    const { isOpen, loading } = this.props;
+    const { first_name, last_name, email, role, validationErrors } = this.state;
 
     return isOpen ? (
       <RootModal>

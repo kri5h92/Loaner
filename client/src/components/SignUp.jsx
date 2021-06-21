@@ -2,53 +2,22 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { signUpUser,purgeErrors } from '../actions';
+import { purgeErrors, signupUser } from '../actions';
 import LoadingModal from './shared/modals/LoadingModal';
 import { validateSignUpFormFields } from '../validation/signUp';
-import FormFieldValidationErr from './shared/FormFieldValidationErr'
+import FormFieldValidationErr from './shared/FormFieldValidationErr';
 import ApiErrorsRender from './shared/ApiErrorsRender';
 
 class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      apiErrors: [],
-      validationErrors: {},
-      showModal: false,
-      userRole: ''
+      userRole: '',
+      validationErrors: {}
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleRoleBtnClick = this.handleRoleBtnClick.bind(this);
-  }
-
-  componentDidMount() {
-    const {purgeErrors} = this.props;
-    purgeErrors();
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.apiErrors !== prevState.apiErrors) {
-      return { apiErrors: nextProps.apiErrors };
-    }
-    return null;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { apiErrors } = this.state;
-    const { auth } = this.props;
-
-    if (prevProps.auth !== auth) {
-      if (auth.loading) {
-        this.setState({ showModal: true });
-      } else {
-        this.setState({ showModal: false });
-      }
-    }
-
-    if (prevState.apiErrors !== apiErrors) {
-      this.setState({ apiErrors });
-    }
   }
 
   handleRoleBtnClick(e) {
@@ -62,12 +31,12 @@ class SignUp extends Component {
         userRole: 'agent'
       });
     }
-    return;
+    return '';
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const { signUpUser, history } = this.props;
+    const { dispatch } = this.props;
     const { userRole } = this.state;
     const payloads = {
       first_name: this.first_name.value,
@@ -82,7 +51,7 @@ class SignUp extends Component {
     if (!isValid) {
       this.setState({ validationErrors: errors });
     } else {
-      signUpUser(payloads, history);
+      dispatch(signupUser(payloads));
     }
   }
 
@@ -91,7 +60,9 @@ class SignUp extends Component {
   }
 
   render() {
-    const { showModal, userRole, validationErrors, apiErrors } = this.state;
+    const { userRole, validationErrors } = this.state;
+    const { loading, apiErrors } = this.props;
+
     const roleTemplate = (
       <div className='h-screen flex flex-col justify-center items-center'>
         <h1 className='text-4xl'>How would you like to join us ?</h1>
@@ -194,6 +165,7 @@ class SignUp extends Component {
                   }}
                   className='px-3 py-2 border text-gray-700 focus:ring-2 shadow-md outline-none'
                   placeholder='Your Password'
+                  autoComplete='new-password'
                   required
                 />
                 <FormFieldValidationErr error={validationErrors.password} />
@@ -211,6 +183,7 @@ class SignUp extends Component {
                   }}
                   className='px-3 py-2 border text-gray-700 focus:ring-2 shadow-md outline-none'
                   placeholder='Your Password Confirmation'
+                  autoComplete='new-password'
                   required
                 />
                 <FormFieldValidationErr error={validationErrors.password2} />
@@ -235,25 +208,25 @@ class SignUp extends Component {
       </div>
     );
 
-    return (
+    const content = (
       <section className='sign-up'>
-        {showModal && <LoadingModal />}
+        {loading && <LoadingModal />}
         {userRole.length === 0 ? roleTemplate : signUpFormTemplate}
       </section>
     );
+
+    return content;
   }
 }
 
 SignUp.propTypes = {
-  auth: PropTypes.shape({}).isRequired,
-  signUpUser: PropTypes.func.isRequired,
-  purgeErrors: PropTypes.func.isRequired,
+  apiErrors: PropTypes.arrayOf(PropTypes.object).isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
-// allow us to call this.props.auth || this.props.errors
 const mapStateToProps = (state) => ({
-  auth: state.auth,
-  apiErrors: state.errors,
+  loading: state.auth.loading,
+  apiErrors: state.auth.errors
 });
 
-export default connect(mapStateToProps, { signUpUser,purgeErrors })(withRouter(SignUp));
+export default connect(mapStateToProps)(withRouter(SignUp));

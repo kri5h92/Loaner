@@ -1,5 +1,5 @@
 import isEmpty from 'is-empty';
-import formValidator from '../utils/formValidator';
+import { formValidator } from '../utils/form';
 import { filterObj } from '../utils/helper';
 
 function validateSignInFormFields(data) {

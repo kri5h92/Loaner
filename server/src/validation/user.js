@@ -1,12 +1,13 @@
 const Validator = require("validator");
 const isEmpty = require("is-empty");
+const _ = require("lodash");
+const { isUserRoleValid } = require("../utils/user");
 
-const {isUserRoleValid, userRole} = require("../utils/user"); 
-
-function validateUserCreateORUpdateInputs(data) {
-  let errors = [];
+function validateUserCreateORUpdateInputs(_data) {
+  const data = _.cloneDeep(_data);
+  const errors = [];
   let error = {};
-  let title = "Validation error";
+  const title = "Validation error";
 
   // Setting empty fields to a empty string to make validator object work
   data.first_name = !isEmpty(data.first_name) ? data.first_name : "";
@@ -44,7 +45,7 @@ function validateUserCreateORUpdateInputs(data) {
     error = {};
     error.last_name = { title, message: "Required user role" };
     errors.push(error);
-  }else if (!isUserRoleValid(data.role)){
+  } else if (!isUserRoleValid(data.role)) {
     error = {};
     error.last_name = { title, message: "User role is invalid" };
     errors.push(error);
@@ -56,4 +57,4 @@ function validateUserCreateORUpdateInputs(data) {
   };
 }
 
-module.exports =  {validateUserCreateORUpdateInputs};
+module.exports = { validateUserCreateORUpdateInputs };
