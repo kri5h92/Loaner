@@ -1,0 +1,6 @@
+[submodule "kreditpay-server"]
+	path = kreditpay-server
+	url = https://github.com/CoderOO7/kreditpay-server
+[submodule "kreditpay-client"]
+	path = kreditpay-client
+	url = https://github.com/CoderOO7/kreditpay-client
