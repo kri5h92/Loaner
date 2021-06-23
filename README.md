@@ -43,3 +43,29 @@ Using  MERN stack i.e.
 > To prevent bugs project is locked to run only on Node v10.0+.
 >
 > Recommended to use [NVM](https://github.com/creationix/nvm)
+
+## Running Project locally
+
+Run these commands in terminal.
+
+```bash
+$ git clone https://github.com/CoderOO7/kreditpay.git
+$ cd kreditpay
+$ npm run install-all
+```
+This will install dependencies for both client and server. The next step is to set `environment` variables. For this checkout client and server directory.
+
+And then run this command from root directory.
+```bash
+$ npm start
+```
+
+It serve the project on http://localhost:8080
+
+## Contribution
+
+1.  Fork it!
+2.  Create your feature branch: `git checkout -b my-new-feature`
+3.  Commit your changes: `git commit -am 'Add some feature'`
+4.  Push to the branch: `git push origin my-new-feature`
+5.  Submit a pull request :D

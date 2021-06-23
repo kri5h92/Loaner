@@ -3,9 +3,6 @@
     "configurations": [],
     "compounds": []
   },
-  "eslint.workingDirectories": [
-      "./client",
-      "./server"
-  ],
+  "eslint.workingDirectories": ["./kreditpay-client", "./kreditpay-server"],
   "git.ignoreLimitWarning": true
 }
