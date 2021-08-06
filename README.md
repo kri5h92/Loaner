@@ -49,10 +49,11 @@ Using  MERN stack i.e.
 Run these commands in terminal.
 
 ```bash
-$ git clone https://github.com/CoderOO7/kreditpay.git
+$ git clone --recurse-submodules https://github.com/CoderOO7/kreditpay.git
 $ cd kreditpay
 $ npm run install-all
 ```
+
 This will install dependencies for both client and server. The next step is to set `environment` variables. For this checkout client and server directory.
 
 And then run this command from root directory.
